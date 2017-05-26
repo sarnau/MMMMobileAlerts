@@ -1,0 +1,13 @@
+{
+  "name": "MobileAlertsSensorServer",
+  "version": "1.0.0",
+  "description": "Mobile-Alerts Sensor Server with MQTT, KNX and log support",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "nconf": "*",
+    "knx.js": "*",
+    "mqtt": "*",
+    "express": "*",
+    "body-parser": "*"
+  }
+}
