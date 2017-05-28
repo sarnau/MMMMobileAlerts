@@ -115,37 +115,37 @@ BTW: The gateway is only compatible to IPv4, not IPv6!
 
 The gateway also has a little web interface, which shows it's network configuration. There is no direct way to configure the device with this web interface. However the values in bold can be modified via a UDP interface.
 
-> Mobile Alerts Settings & States
->
->
-> Software:	MOBILE-ALERTS-Gateway V1.50.00
-> Compilation Date:	02/11/15
-> Compilation Time:	10:50:00
-> Serial No. (hex.):	80AABBCC
-> Serial No. (dec.):	00 11 22 33
-> Name:	**MOBILEALERTS-Gateway**
-> Registration state:	Registered
-> Use DHCP:	**Yes**
-> Fixed IP:	**192.168.1.222**
-> Fixed Netmask:	**255.255.255.0**
-> Fixed Gateway:	**192.168.1.254**
-> Fixed DNS IP:	**192.168.1.253**
-> DHCP valid:	Yes
-> DHCP IP:	192.168.1.100
-> DHCP Netmask:	255.255.255.0
-> DHCP Gateway:	192.168.1.1
-> DHCP DNS:	192.168.1.1
-> DNS states:	0 / 0
-> Data Server Name:	**www.data199.com**
-> Use Proxy:	**No**
-> Proxy Server Name:	**192.168.1.1**
-> Proxy Port:	**8080**
-> Proxy Server IP:	192.168.1.1
-> Last contact:	No contact
-> RF channel:	2
-> [Go to MOBILE-ALERTS - Homepage](http://http//www.mobile-alerts.eu)
->
-> Time:686300
+Mobile Alerts Settings & States<br />
+<br />
+<br />
+Software:	MOBILE-ALERTS-Gateway V1.50.00<br />
+Compilation Date:	02/11/15<br />
+Compilation Time:	10:50:00<br />
+Serial No. (hex.):	80AABBCC<br />
+Serial No. (dec.):	00 11 22 33<br />
+Name:	**MOBILEALERTS-Gateway**<br />
+Registration state:	Registered<br />
+Use DHCP:	**Yes**<br />
+Fixed IP:	**192.168.1.222**<br />
+Fixed Netmask:	**255.255.255.0**<br />
+Fixed Gateway:	**192.168.1.254**<br />
+Fixed DNS IP:	**192.168.1.253**<br />
+DHCP valid:	Yes<br />
+DHCP IP:	192.168.1.100<br />
+DHCP Netmask:	255.255.255.0<br />
+DHCP Gateway:	192.168.1.1<br />
+DHCP DNS:	192.168.1.1<br />
+DNS states:	0 / 0<br />
+Data Server Name:	**www.data199.com**<br />
+Use Proxy:	**No**<br />
+Proxy Server Name:	**192.168.1.1**<br />
+Proxy Port:	**8080**<br />
+Proxy Server IP:	192.168.1.1<br />
+Last contact:	No contact<br />
+RF channel:	2<br />
+[Go to MOBILE-ALERTS - Homepage](http://http//www.mobile-alerts.eu)<br />
+<br />
+Time:686300<br />
 
 `Serial No. (hex.)` is "80" plus the lower 3 bytes of the ID converted to hex. `Serial No. (dec.)` is the same, with the lower 3 bytes treated as a single number converted to decimal and with spaces every 2 digits resulting in 8 decimal digits.
 
