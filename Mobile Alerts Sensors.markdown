@@ -68,7 +68,11 @@ Every sensor has a QR Code printed on it, or in the box (for the small window se
 
 ![QR Code](qrcode.png)
 
-It is a simple 3 line ASCII text, with lines separated by CR (ASCII 13). The first line is the serial number of the sensor, follow by the production date (day.month.year), followed by the product name or version number.
+It contains three lines of ASCII text, with the lines separated by CR (ASCII 13):
+
+1. serial number of the sensor
+2. production date (day.month.year)
+3. product name or version number.
 
 Here is a small sample code that generates the QR Code:
 
