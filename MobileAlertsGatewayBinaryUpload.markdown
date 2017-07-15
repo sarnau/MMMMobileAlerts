@@ -25,12 +25,13 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 
 ### Offset 0: Package Header
 | header | device ID | package length | sensor type |
-|----|----------------|
+|----|----|----|-----------|
 |0xce|ID02|0x12|temperature|
 |0xd2|ID03|0x16|temperature + humidity|
 |0xd3|ID10|0x17|open/close sensor|
 |0xd4|ID04|0x18|temperature + humidity + dry-contact|
 |0xd6|ID06|0x1a|temperature + humidity + pool temperature|
+|0xda|ID07|0x1e|temperature in + humidity in + temperature out + humidity out|
 |0xe1|ID08|0x25|rain|
 |0xe2|ID0b|0x26|wind|
 
@@ -75,6 +76,16 @@ Starting here is the sensor depended data.
 |    |  8 word: previous temperature |
 |    | 10 word: previous pool temperature |
 |    | 12 word: previous humidity |
+| 07 | **Weather Station MA10410**|
+|    |  0 word: tx counter |
+|    |  2 word: temperature in |
+|    |  4 word: humidity in |
+|    |  6 word: temperature out |
+|    |  8 word: humidity out |
+|    | 10 word: previous temperature in |
+|    | 12 word: previous humidity in |
+|    | 14 word: previous temperature out |
+|    | 16 word: previous humidity out |
 | 08 | **Rain sensor** |
 |    |  0 word: tx counter |
 |    |  2 word: Bit 14-15: %10:rain seesaw to the left  |
