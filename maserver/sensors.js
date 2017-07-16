@@ -278,6 +278,34 @@ Sensor_ID06.prototype.debugString = function() {
 }
 
 
+// ID07: Weather Station MA 10410
+function Sensor_ID07() {}
+util.inherits(Sensor_ID07, SensorBase);
+Sensor_ID07.prototype.bufferSize = function() {
+  return 16;
+}
+Sensor_ID07.prototype.transmitInterval = function() {
+  return 6;
+}
+Sensor_ID07.prototype.generateJSON = function(buffer) {
+  return { 'in': { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(0))
+                                  , this.convertTemperature(buffer.readUInt16BE(8))],
+                   'humidity': [ this.convertHumidity(buffer.readUInt16BE(2))
+                               , this.convertHumidity(buffer.readUInt16BE(10))] },
+           'out': { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(4))
+                                   , this.convertTemperature(buffer.readUInt16BE(12))],
+                    'humidity': [ this.convertHumidity(buffer.readUInt16BE(6))
+                                , this.convertHumidity(buffer.readUInt16BE(14))] }
+  }
+}
+Sensor_ID07.prototype.debugString = function() {
+  return 'IN: ' + this.temperaturAsString(this.json.in.temperature[0])
+    + ' ' + this.humidityAsString(this.json.in.humidity[0])
+    + ' OUT:' + this.temperaturAsString(this.json.out.temperature[0])
+    + ' ' + this.humidityAsString(this.json.out.humidity[0])
+}
+
+
 // ID08: Rain sensor
 function Sensor_ID08() {}
 util.inherits(Sensor_ID08, SensorBase);
