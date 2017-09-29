@@ -463,3 +463,32 @@ Sensor_ID10.prototype.debugString = function() {
   }
   return statusStr
 }
+
+// ID12: Humidity Guard (MA10230)
+function Sensor_ID12() {}
+util.inherits(Sensor_ID12, SensorBase);
+Sensor_ID12.prototype.bufferSize = function() {
+  return 15;
+}
+Sensor_ID12.prototype.transmitInterval = function() {
+  return 10;
+}
+Sensor_ID12.prototype.generateJSON = function(buffer) {
+  return { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(4)) ],
+           'humidity': [ this.convertHumidity(buffer.readUInt8(6)) ],
+           'averangehumidity': {
+             '3h': this.convertHumidity(buffer.readUInt8(0)),
+             '24h': this.convertHumidity(buffer.readUInt8(1)),
+             '7d': this.convertHumidity(buffer.readUInt8(2)),
+             '30d': this.convertHumidity(buffer.readUInt8(3))
+           }
+  };
+}
+Sensor_ID12.prototype.debugString = function() {
+  return this.temperaturAsString(this.json.temperature[0])
+  + ' ' + this.humidityAsString(this.json.humidity[0])  
+  + ' 3h: ' + this.humidityAsString(this.json.out.averangehumidity["3h"])
+  + ' 24h: ' + this.humidityAsString(this.json.out.averangehumidity["24h"])
+  + ' 7d: ' + this.humidityAsString(this.json.out.averangehumidity["7d"])
+  + ' 30d: ' + this.humidityAsString(this.json.out.averangehumidity["30d"]);
+}
