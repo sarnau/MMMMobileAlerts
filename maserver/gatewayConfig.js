@@ -71,33 +71,33 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
                     + mobileAlertGatewayID.toString('hex'));
         if(message.length == len) {
           if(command == GET_CONFIG && len == GET_CONFIG_SIZE) {
-            //console.log('False        : ' + Boolean(message[0x0a]));
-            console.log('Name         : '
+            //console.log('False                : ' + Boolean(message[0x0a]));
+            console.log('Name                 : '
                         + message.toString('utf-8', 0x1c, 0x1c+21));
-            console.log('Use DHCP       : '
+            console.log('Use DHCP             : '
                         + Boolean(message[0x0f]));
-            console.log('DHCP IP        : '
+            console.log('DHCP IP              : '
                         + message[0x0b] + '.' + message[0x0c]
                         + '.' + message[0x0d] + '.' + message[0x0e]);
-            console.log('Fixed IP       : '
+            console.log('Fixed IP             : '
                         + message[0x10] + '.' + message[0x11] + '.'
                         + message[0x12] + '.' + message[0x13]);
-            console.log('DHCP Netmask     : '
+            console.log('DHCP Netmask         : '
                         + message[0x14] + '.' + message[0x15] + '.'
                         + message[0x16] + '.' + message[0x17]);
-            console.log('Fixed DNS IP     : '
+            console.log('Fixed DNS IP         : '
                         + message[0xb6] + '.' + message[0xb7] + '.'
                         + message[0xb8] + '.' + message[0xb9]);
-            console.log('Fixed Gateway      : '
+            console.log('Fixed Gateway        : '
                         + message[0x18] + '.' + message[0x19] + '.'
                         + message[0x1a] + '.' + message[0x1b]);
-            console.log('Use Proxy        : '
+            console.log('Use Proxy            : '
                         + Boolean(message[0x72]));
             console.log('Proxy Server Name    : '
                         + message.toString('utf-8', 0x73, 0x73+65));
-            console.log('Proxy Port       : '
+            console.log('Proxy Port           : '
                         + message.readInt16BE(0xb4));
-            console.log('Data Server Name   : '
+            console.log('Data Server Name     : '
                         + message.toString('utf-8', 0x31, 0x31+65));
           } else if (command == SET_CONFIG && len == SET_CONFIG_SIZE) {
             console.log('Name         : '
