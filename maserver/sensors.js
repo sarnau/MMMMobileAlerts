@@ -319,6 +319,34 @@ Sensor_ID06.prototype.debugString = function() {
 }
 
 
+// ID07: Weather Station MA 10410
+function Sensor_ID07() {}
+util.inherits(Sensor_ID07, SensorBase);
+Sensor_ID07.prototype.bufferSize = function() {
+  return 16;
+}
+Sensor_ID07.prototype.transmitInterval = function() {
+  return 6;
+}
+Sensor_ID07.prototype.generateJSON = function(buffer) {
+  return { 'in': { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(0))
+                                  , this.convertTemperature(buffer.readUInt16BE(8))],
+                   'humidity': [ this.convertHumidity(buffer.readUInt16BE(2))
+                               , this.convertHumidity(buffer.readUInt16BE(10))] },
+           'out': { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(4))
+                                   , this.convertTemperature(buffer.readUInt16BE(12))],
+                    'humidity': [ this.convertHumidity(buffer.readUInt16BE(6))
+                                , this.convertHumidity(buffer.readUInt16BE(14))] }
+  }
+}
+Sensor_ID07.prototype.debugString = function() {
+  return 'IN: ' + this.temperaturAsString(this.json.in.temperature[0])
+    + ' ' + this.humidityAsString(this.json.in.humidity[0])
+    + ' OUT:' + this.temperaturAsString(this.json.out.temperature[0])
+    + ' ' + this.humidityAsString(this.json.out.humidity[0])
+}
+
+
 // ID08: Rain sensor
 function Sensor_ID08() {}
 util.inherits(Sensor_ID08, SensorBase);
@@ -475,4 +503,33 @@ Sensor_ID10.prototype.debugString = function() {
     statusStr = 'CLOSED'
   }
   return statusStr
+}
+
+// ID12: Humidity Guard (MA10230)
+function Sensor_ID12() {}
+util.inherits(Sensor_ID12, SensorBase);
+Sensor_ID12.prototype.bufferSize = function() {
+  return 15;
+}
+Sensor_ID12.prototype.transmitInterval = function() {
+  return 10;
+}
+Sensor_ID12.prototype.generateJSON = function(buffer) {
+  return { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(4)) ],
+           'humidity': [ this.convertHumidity(buffer.readUInt8(6)) ],
+           'averangehumidity': {
+             '3h': this.convertHumidity(buffer.readUInt8(0)),
+             '24h': this.convertHumidity(buffer.readUInt8(1)),
+             '7d': this.convertHumidity(buffer.readUInt8(2)),
+             '30d': this.convertHumidity(buffer.readUInt8(3))
+           }
+  };
+}
+Sensor_ID12.prototype.debugString = function() {
+  return this.temperaturAsString(this.json.temperature[0])
+  + ' ' + this.humidityAsString(this.json.humidity[0])  
+  + ' 3h: ' + this.humidityAsString(this.json.out.averangehumidity["3h"])
+  + ' 24h: ' + this.humidityAsString(this.json.out.averangehumidity["24h"])
+  + ' 7d: ' + this.humidityAsString(this.json.out.averangehumidity["7d"])
+  + ' 30d: ' + this.humidityAsString(this.json.out.averangehumidity["30d"]);
 }

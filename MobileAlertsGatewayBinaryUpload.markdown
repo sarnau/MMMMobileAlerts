@@ -25,12 +25,14 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 
 ### Offset 0: Package Header
 | header | device ID | package length | sensor type |
-|----|----------------|
+|----|----|----|-----------|
 |0xce|ID02|0x12|temperature|
 |0xd2|ID03|0x16|temperature + humidity|
 |0xd3|ID10|0x17|open/close sensor|
 |0xd4|ID04|0x18|temperature + humidity + dry-contact|
 |0xd6|ID06|0x1a|temperature + humidity + pool temperature|
+|0xd9|ID12|0x1d|humidity average + temperature + humidity |
+|0xda|ID07|0x1e|temperature in + humidity in + temperature out + humidity out|
 |0xe1|ID08|0x25|rain|
 |0xe2|ID0b|0x26|wind|
 
@@ -75,6 +77,16 @@ Starting here is the sensor depended data.
 |    |  8 word: previous temperature |
 |    | 10 word: previous pool temperature |
 |    | 12 word: previous humidity |
+| 07 | **Weather Station MA10410**|
+|    |  0 word: tx counter |
+|    |  2 word: temperature in |
+|    |  4 word: humidity in |
+|    |  6 word: temperature out |
+|    |  8 word: humidity out |
+|    | 10 word: previous temperature in |
+|    | 12 word: previous humidity in |
+|    | 14 word: previous temperature out |
+|    | 16 word: previous humidity out |
 | 08 | **Rain sensor** |
 |    |  0 word: tx counter |
 |    |  2 word: Bit 14-15: %10:rain seesaw to the left  |
@@ -141,7 +153,15 @@ Starting here is the sensor depended data.
 |    |  4 word: previous state (lower 12 bits contain the time in seconds/minutes/hours/days since last event) |
 |    |  6 word: previous state |
 |    |  8 word: previous state |
-| 12 | **Humidity Guard** |
+| 12 | **Humidity Guard (MA10230)** |
+|    |  0 word: tx counter |
+|    |  2 byte: 3h humidity average |
+|    |  3 byte: 24h humidity average |
+|    |  4 byte: 7d humidity average |
+|    |  5 byte: 30d humidity average |
+|    |  6 word: current temperature |
+|    |  8 byte: current humidity |
+|    |  9-16: unknown (pervious values?) |
 
 ### Value decoding
 
@@ -179,7 +199,7 @@ A sensor error typically occurs if e.g. the water temperature sensor of the pool
 |  13   | unknown |
 |  12   | unknown |
 | 8…11  | unknown, typically a value of 10, on the MA10250PRO (Outdoor sensor) it is 0 |
-|   7   | unknown |
+|   7   | unknown (MA10230 average values 1= "--" (not calculated)) |
 | 0…6   | humidity is a 7 bit value and read as % |
 
 #### Wetness
