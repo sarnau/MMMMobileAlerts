@@ -122,6 +122,19 @@ SensorBase.prototype.humidityAsString = function(humidity) {
 }
 
 
+SensorBase.prototype.convertAirquality = function(value) {
+  // values: 450…3950ppm
+  value = value & 0xfff;
+  if(value > 79)
+  	return 'OLF';
+  return (value & 0x7f) * 50;
+}
+
+SensorBase.prototype.airqualityAsString = function(airquality) {
+  return airquality.toString() + 'ppm'
+}
+
+
 SensorBase.prototype.convertWetness = function(value) {
   if(value & 1) return false;   // dry
   return true;          // wet
@@ -251,6 +264,34 @@ Sensor_ID04.prototype.debugString = function() {
   }
   return this.temperaturAsString(this.json.temperature[0])
     + ' ' + this.humidityAsString(this.json.humidity[0]) + ' ' + statusStr
+}
+
+
+// ID05: Air Quality sensor WL 2000 with outside sensor
+function Sensor_ID05() {}
+util.inherits(Sensor_ID05, SensorBase);
+Sensor_ID05.prototype.bufferSize = function() {
+  return 16;
+}
+Sensor_ID05.prototype.transmitInterval = function() {
+  return 7;
+}
+Sensor_ID05.prototype.generateJSON = function(buffer) {
+  return {
+       'temperatureExt': [ this.convertTemperature(buffer.readUInt16BE(0))
+                         , this.convertTemperature(buffer.readUInt16BE(8))],
+       'temperature': [ this.convertTemperature(buffer.readUInt16BE(2))
+                      , this.convertTemperature(buffer.readUInt16BE(10))],
+       'humidity': [ this.convertHumidity(buffer.readUInt16BE(4))
+                   , this.convertHumidity(buffer.readUInt16BE(12))] }
+       'airquality': [ this.convertAirquality(buffer.readUInt16BE(6))
+                   , this.convertAirquality(buffer.readUInt16BE(14))] }
+}
+Sensor_ID05.prototype.debugString = function() {
+  return this.temperaturAsString(this.json.temperature[0]) + ' ' +
+  	     this.temperaturAsString(this.json.temperatureExt[0]) + ' ' +
+         this.humidityAsString(this.json.humidity[0]) + ' ' +
+         this.airqualityAsString(this.json.airquality[0]) + ' ' + statusStr
 }
 
 
