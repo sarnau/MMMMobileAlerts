@@ -283,7 +283,7 @@ Sensor_ID05.prototype.generateJSON = function(buffer) {
        'temperature': [ this.convertTemperature(buffer.readUInt16BE(2))
                       , this.convertTemperature(buffer.readUInt16BE(10))],
        'humidity': [ this.convertHumidity(buffer.readUInt16BE(4))
-                   , this.convertHumidity(buffer.readUInt16BE(12))] }
+                   , this.convertHumidity(buffer.readUInt16BE(12))],
        'airquality': [ this.convertAirquality(buffer.readUInt16BE(6))
                    , this.convertAirquality(buffer.readUInt16BE(14))] }
 }
