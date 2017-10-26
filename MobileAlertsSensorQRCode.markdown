@@ -27,7 +27,7 @@ Here is a small sample code that generates the QR Code:
     import qrcode
 
     qr = qrcode.QRCode(
-        version=2,
+        version=3,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
         box_size=10,
         border=4,
