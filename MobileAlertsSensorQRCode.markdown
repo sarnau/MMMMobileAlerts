@@ -4,7 +4,16 @@ Every sensor has a QR Code printed on it, or in the box (for the small window se
 
 ![QR Code](qrcode.png)
 
-It contains three lines of ASCII text, with the lines separated by CR (ASCII 13):
+The encoding is different from the above example (which I quickly generated):
+
+- ECC Level L (Low Error Correction)
+- Mask Pattern 3
+- Encoding Format: 8-bit Byte (Because of the CR character)
+- Version 3: 29x29 Pixel
+
+This allows 53 characters to be stored in the QR code, which works for the sensors.
+
+The text contains three lines of ASCII text, with the lines separated by CR (ASCII 13):
 
 1. serial number of the sensor
 2. production date (day.month.year)
