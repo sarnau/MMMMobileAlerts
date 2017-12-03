@@ -28,9 +28,11 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 |----|----|----|-----------|
 |0xce|ID02|0x12|temperature|
 |0xd2|ID03|0x16|temperature + humidity|
+|0xd2|ID0F|0x16|temperature in + temperature out |
 |0xd3|ID10|0x17|open/close sensor|
 |0xd4|ID04|0x18|temperature + humidity + dry-contact|
 |0xd6|ID06|0x1a|temperature + humidity + pool temperature|
+|0xd8|ID0E|0x1c|temperature + humidity (with decimal place)|
 |0xd9|ID12|0x1d|humidity average + temperature + humidity |
 |0xda|ID07|0x1e|temperature in + humidity in + temperature out + humidity out|
 |0xe1|ID08|0x25|rain|
@@ -142,6 +144,22 @@ Starting here is the sensor depended data.
 | 0c | illegal sensor id |
 | 0d | illegal sensor id |
 | 0e | **Professional Thermo/Hygro sensor** |
+|    | 0 word: tx counter |
+|    | 2 word: temperature |
+|    | 4 word: humidity with decimal place |
+|    | 5 byte: unknown |
+|    | 7 word: previous temperature |
+|    | 9 word: previous humidity with decimal place |
+|    | 10 byte: unknown |
+|    | 11 word: previous temperature |
+|    | 13 word: previous humidity with decimal place |
+|    | 14 byte: unknown |
+| 0f | **Weather Station** |
+|    |  0 word: tx counter |
+|    |  2 word: temperature in |
+|    |  4 word: temperature out |
+|    |  6 word: previous temperature in |
+|    |  8 word: previous temperature out |
 | 10 | **Door/Window sensor** (idle time: 6 hours) |
 |    |  0 word: tx counter |
 |    |  2 word: Bit 15: 0:Closed, 1:Open  |
@@ -201,6 +219,13 @@ A sensor error typically occurs if e.g. the water temperature sensor of the pool
 | 8…11  | unknown, typically a value of 10, on the MA10250PRO (Outdoor sensor) it is 0 |
 |   7   | unknown (MA10230 average values 1= "--" (not calculated)) |
 | 0…6   | humidity is a 7 bit value and read as % |
+
+#### Humidity with decimal place
+
+| Bits  | Meaning |
+|-------|---------|
+| 10-15 | unknown |
+| 0…9   | humidity is a 10 bit value in 1/10% |
 
 #### Wetness
 

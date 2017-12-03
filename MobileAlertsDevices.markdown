@@ -28,13 +28,14 @@ Here a list of all known products from Mobile Alerts. The product code is a mark
 | MA10320      | ID09 | Pro Thermo-hygro-sensor with ext. cable probe | –39.9°C…+59.9°C, ±1°C, cable probe –50°C…+110°C, ±0,5°C, 20%…99% ±5% | 3.5 min |
 | MA10350      | ID04 | Thermo-hygro-sensor with water detector | –39.9°C…+59.9°C, 20%…99%, ±4% | */7 min |
 | MA10410      | ID07 | Weather Station | indoor: -9.9°C…+59.9°C ±1°C, 20%…95% ±4%, outdoor -39.9°C…+59.9°C ±1°C, outdoor 1%…99% ±4% | 6 min |
+| MA10450      | ID0F | Weather Station | indoor: -9.9°C…+59.9°C ±1°C, outdoor -39.9°C…+59.9°C ±1°C | 7min |
 | MA10650      | ID08 | Rain meter | 0mm/h…300mm/h, 0.258mm | during rain up to every second, or every 2 hours during idle |
 | MA10660      | ID0B | Wind speed and wind direction display | wind and gusts: 0-50 m/s, ±5% or ±0.5 m/s, 0,02s gusts, direction 22,5° resolution | 6 min |
 | MA10700      | ID06 | Thermo-hygro-sensor with pool sensor | –39.9°C…+59.9°C ±1°C, 20%…99%, ±4% Pool:0°C…+59.9°C ±1°C | |
 | MA10800      | ID10 | Contact sensor | | state change, or every 6 hours during idle |
 | MA10860      | ID0a | Sensor for acoustical observation of detectors | ? | ? |
 | WL2000       | ID05 | Air quality monitor | indoor: -9.5°C…+59.9°C ±1°C, 20%…95% ±4%, outdoor -39.9°C…+59.9°C ±1°C, outdoor 1%…99%, CO²-equivalent: 450ppm…3950ppm ±50ppm | 7 min |
-| ?            | ID0E | Thermo-hygro-sensor | | |
+| TFA30.3312.02 | ID0E | Thermo-hygro-sensor | –40.0°C…+60.0°C, 0.0%…99.0% | ? |
 | ?            | ID0F | Temperature sensor with ext. cable probe | | |
 | ?            | ID11 | 4 Thermo-hygro-sensors | | |
 
