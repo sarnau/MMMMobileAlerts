@@ -35,7 +35,7 @@ Here a list of all known products from Mobile Alerts. The product code is a mark
 | MA10800      | ID10 | Contact sensor | | state change, or every 6 hours during idle |
 | MA10860      | ID0a | Sensor for acoustical observation of detectors | ? | ? |
 | WL2000       | ID05 | Air quality monitor | indoor: -9.5°C…+59.9°C ±1°C, 20%…95% ±4%, outdoor -39.9°C…+59.9°C ±1°C, outdoor 1%…99%, CO²-equivalent: 450ppm…3950ppm ±50ppm | 7 min |
-| ?            | ID0E | Thermo-hygro-sensor | | |
+| TFA30.3312.02 | ID0E | Thermo-hygro-sensor | –40.0°C…+60.0°C, 0.0%…99.0% | ? |
 | ?            | ID0F | Temperature sensor with ext. cable probe | | |
 | ?            | ID11 | 4 Thermo-hygro-sensors | | |
 
