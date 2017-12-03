@@ -28,6 +28,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 |----|----|----|-----------|
 |0xce|ID02|0x12|temperature|
 |0xd2|ID03|0x16|temperature + humidity|
+|0xd2|ID0F|0x16|temperature in + temperature out |
 |0xd3|ID10|0x17|open/close sensor|
 |0xd4|ID04|0x18|temperature + humidity + dry-contact|
 |0xd6|ID06|0x1a|temperature + humidity + pool temperature|
@@ -142,6 +143,12 @@ Starting here is the sensor depended data.
 | 0c | illegal sensor id |
 | 0d | illegal sensor id |
 | 0e | **Professional Thermo/Hygro sensor** |
+| 0f | **Weather Station** |
+|    |  0 word: tx counter |
+|    |  2 word: temperature in |
+|    |  4 word: temperature out |
+|    |  6 word: previous temperature in |
+|    |  8 word: previous temperature out |
 | 10 | **Door/Window sensor** (idle time: 6 hours) |
 |    |  0 word: tx counter |
 |    |  2 word: Bit 15: 0:Closed, 1:Open  |
