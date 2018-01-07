@@ -34,6 +34,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 |0xd6|ID06|0x1a|temperature + humidity + pool temperature|
 |0xd8|ID0E|0x1c|temperature + humidity (with decimal place)|
 |0xd9|ID12|0x1d|humidity average + temperature + humidity |
+|0xda|ID05|0x1e|temperature out + tempereature in + humidity + air quality |
 |0xda|ID07|0x1e|temperature in + humidity in + temperature out + humidity out|
 |0xe1|ID08|0x25|rain|
 |0xe2|ID0b|0x26|wind|
@@ -71,6 +72,14 @@ Starting here is the sensor depended data.
 |    |  9 word: previous humidity |
 |    | 11 byte: previous water sensor |
 | 05 | **Air Quality Monitor [WL2000]** |
+|    |  0 word: tx counter |
+|    |  2 word: temperature out |
+|    |  4 word: temperature in |
+|    |  6 word: humidity in |
+|    |  8 word: air quality (CO2) |
+|    | 10 word: previous temperature out |
+|    | 12 word: previous temperature in |
+|    | 14 word: previous humidity in |
 | 06 | **Temperature/Humidity/Pool sensor** |
 |    |  0 word: tx counter |
 |    |  2 word: temperature |
@@ -226,6 +235,14 @@ A sensor error typically occurs if e.g. the water temperature sensor of the pool
 |-------|---------|
 | 10-15 | unknown |
 | 0…9   | humidity is a 10 bit value in 1/10% |
+
+#### Air quality
+
+| Bits  | Meaning |
+|-------|---------|
+| 8…15  | unknown |
+|   8   | probably overflow |
+| 0…7   | Counter for 50 ppm (e.g. 9 is 450 ppm) |
 
 #### Wetness
 
