@@ -40,9 +40,10 @@ The cloud has to confirm the package, otherwise they will be resent. You can see
 ## Factory Reset
 
 1. Disconnect the gateway from power
-2. hold down the button on the gateway
-3. connect power, while still holding down the button
-4. Release button after you see: RED on, RED off, RED on
+2. Hold down the button on the gateway
+3. Connect power, while still holding down the button
+4. The red LED lights up, after a about 5s seconds the green ones also lights up. Green briefly goes off, then about 10s later they both flicker really fast.
+5. Release the button
+6. After a 10-15s of flickering, the device has reset and starts up normally.
 
 If this doesn't work, try another power-cycle of the gateway.
-
