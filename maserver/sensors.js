@@ -97,7 +97,7 @@ SensorBase.prototype.convertTemperature = function(value) {
   // illegal value from the sensor
   if (value & 0x1000) return -9999;
   // negative values: -102.4°C…-0.1°C
-  if (value & 0x400) return this.round((0x800 - (value & 0x7ff)) * 0.1, 1);
+  if (value & 0x400) return this.round((0x800 - (value & 0x7ff)) * -0.1, 1);
   // positive values: 0.1°C…102.3°C
   return this.round((value & 0x7ff) * 0.1, 1);
 }
