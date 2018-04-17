@@ -42,7 +42,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 ### Offset 1: UNIX UTC Timestamp
 A 4 byte UNIX UTC timestamp when the data was received by the gateway.
 
-### Offset 4: Package Length
+### Offset 5: Package Length
 Length of data within the whole package in bytes. It seems to be always be the same for the same header and device ID.
 
 ### Offset 6: Device ID
