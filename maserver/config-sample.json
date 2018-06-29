@@ -8,5 +8,10 @@
 
   "proxyServerPort": 8080,
 
-  "mobileAlertsCloudForward": false
+  "mobileAlertsCloudForward": false,
+
+  "serverPost": null,
+  "serverPostUser": null,
+  "serverPostPassword": null
+
 }
