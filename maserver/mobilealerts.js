@@ -20,6 +20,9 @@ nconf.defaults({
   // The Mobile-Alert Cloud Server always uses port 8080, we do too,
   // so we are not using a privileged one.
   'proxyServerPort': 8080,
+
+  // Should the proxy forward the data to the Mobile Alerts cloud
+  'mobileAlertsCloudForward': false,
 });
 
 const localIPv4Adress = require('./localIPv4Address')(1);
@@ -184,5 +187,5 @@ const gatewayConfigUDP = require('./gatewayConfig')(
 // All 64-byte packages will arrive via this function
 const proxyServerExpressApp = require('./gatewayProxyServer')(
                           localIPv4Adress,proxyServerPort
-                        , nconf.get('logfile')
+                        , nconf.get('logfile'), nconf.get('mobileAlertsCloudForward')
                         , function (buffer) { processSensorData(buffer); });
