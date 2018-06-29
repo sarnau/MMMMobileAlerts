@@ -5,12 +5,13 @@
 // Each received package is forwarded into the processSensorData function
 
 module.exports = function(localIPv4Adress,proxyServerPort
-                         ,logfile,processSensorData) {
+                         ,logfile,mobileAlertsCloudForward,processSensorData) {
 
   const express = require('express');
   const bodyParser = require('body-parser');
   const getRawBody = require('raw-body');
   const fs = require('fs');
+  const request = require('request');
 
   const app = express();
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -108,6 +109,20 @@ module.exports = function(localIPv4Adress,proxyServerPort
         break;
       case 0xC0:  // This request is used to upload sensor data into the cloud
         processSensorDataByServer(buf,res);
+        if (mobileAlertsCloudForward) {
+          var options = {
+            headers: req.headers,
+            uri: 'http://www.data199.com/gateway/put',
+            method: 'PUT',
+            body: buf
+          };
+
+          request(options, function (error, response, body) {
+            if (error || response.statusCode != 200) {
+              console.log("Error forwarding to Mobile Alerts Cloud: " + response.statusCode);
+            }
+          });
+        }
         break;
       }
     });
