@@ -121,7 +121,7 @@ module.exports = function(localIPv4Adress,proxyServerPort
             if (error || response.statusCode != 200) {
               console.log("Error forwarding to Mobile Alerts Cloud: " + response.statusCode);
             }
-
+          });
         }
         break;
       }
