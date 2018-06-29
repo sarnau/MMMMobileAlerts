@@ -11,6 +11,10 @@ nconf.file({ file: 'config.json' });
 
 // Provide default values for settings not provided above.
 nconf.defaults({
+  // if set to null, then default IP address discovery will be used,
+  // otherwise use specified IP address
+  'localIPv4Address': null,
+
   'mqtt': 'mqtt://127.0.0.1',
   'mqtt_home': 'MobileAlerts/', // default MQTT path for the device parsed data
 
@@ -25,7 +29,13 @@ nconf.defaults({
   'mobileAlertsCloudForward': false,
 });
 
-const localIPv4Adress = require('./localIPv4Address')(1);
+var localIPv4Adress = "";
+if (nconf.get('localIPv4Address') == null) {
+  localIPv4Adress = require('./localIPv4Address')(1);
+} else {
+  localIPv4Adress = nconf.get('localIPv4Address');
+}
+
 console.log('### Local IP address for proxy: ' + localIPv4Adress);
 const proxyServerPort = nconf.get('proxyServerPort');
 
