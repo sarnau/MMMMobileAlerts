@@ -1,0 +1,11 @@
+{
+  "mqtt": "mqtt://128.130.33.65",
+  "mqtt_home": "MobileAlerts/",
+
+  "logfile": "./MobileAlerts.log",
+  "logGatewayInfo": true,
+
+  "proxyServerPort": 8080,
+
+  "mobileAlertsCloudForward": false
+}
