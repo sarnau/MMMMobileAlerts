@@ -2,6 +2,7 @@
 
 const nconf = require('nconf');
 const fs = require('fs');
+const request = require('request');
 
 // First consider commandline arguments and environment variables, respectively.
 nconf.argv().env();
@@ -11,6 +12,10 @@ nconf.file({ file: 'config.json' });
 
 // Provide default values for settings not provided above.
 nconf.defaults({
+  // if set to null, then default IP address discovery will be used,
+  // otherwise use specified IP address
+  'localIPv4Address': null,
+
   'mqtt': 'mqtt://127.0.0.1',
   'mqtt_home': 'MobileAlerts/', // default MQTT path for the device parsed data
 
@@ -23,9 +28,20 @@ nconf.defaults({
 
   // Should the proxy forward the data to the Mobile Alerts cloud
   'mobileAlertsCloudForward': false,
+
+  // post the resulting JSON to a http(s) Service
+  'serverPost': null,
+  "serverPostUser": null,
+  "serverPostPassword": null
 });
 
-const localIPv4Adress = require('./localIPv4Address')(1);
+var localIPv4Adress = "";
+if (nconf.get('localIPv4Address') == null) {
+  localIPv4Adress = require('./localIPv4Address')(1);
+} else {
+  localIPv4Adress = nconf.get('localIPv4Address');
+}
+
 console.log('### Local IP address for proxy: ' + localIPv4Adress);
 const proxyServerPort = nconf.get('proxyServerPort');
 
@@ -105,6 +121,40 @@ function sendMQTT(sensor) {
 */
 }
 
+// send sensor info via Server POST
+function sendPOST(sensor) {
+  const serverPost = nconf.get('serverPost');
+  if(serverPost == null) {
+    return;
+  }
+
+  var json = sensor.json
+  json.offline = false
+
+  var auth = "";
+  var header = {};
+  if (nconf.get('serverPostUser') != null && nconf.get('serverPostPassword') != null) {
+    var auth = 'Basic ' + Buffer.from(nconf.get('serverPostUser') + ':' + nconf.get('serverPostPassword')).toString('base64');
+  }
+
+  header = {'Authorization': auth};
+
+  var options = {
+    uri: serverPost,
+    method: 'POST',
+    headers: header,
+    json: json
+  };
+
+  console.log("posting data...");
+  request(options, function (error, response, body) {
+    if (error || response.statusCode != 200) {
+      console.log("serverPOST failed: " + response.statusCode + " - " + error);
+    }
+  });
+
+}
+
 // #############################################################
 // Mobile Alerts Sensor Code
 
@@ -141,6 +191,7 @@ function processSensorData(buffer) {
     sensor.isOffline = false;
 
     sendMQTT(sensor);   // send the sensor via MQTT
+    sendPOST(sensor);   // send the sensor via JSON POST
 
     // check all sensors if they are considered offline
     // (no message within a given period)

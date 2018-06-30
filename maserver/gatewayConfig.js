@@ -203,7 +203,7 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
     }
   });
 
-  udpSocket.bind(function() {
+  udpSocket.bind({address: localIPv4Adress}, function() {
     udpSocket.setBroadcast(true);
 
     // after the bind delay the request by 250ms

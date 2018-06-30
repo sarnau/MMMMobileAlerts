@@ -1,4 +1,5 @@
 {
+  "localIPv4Address": null,
   "mqtt": "mqtt://128.130.33.65",
   "mqtt_home": "MobileAlerts/",
 
@@ -7,5 +8,10 @@
 
   "proxyServerPort": 8080,
 
-  "mobileAlertsCloudForward": false
+  "mobileAlertsCloudForward": false,
+
+  "serverPost": null,
+  "serverPostUser": null,
+  "serverPostPassword": null
+
 }
