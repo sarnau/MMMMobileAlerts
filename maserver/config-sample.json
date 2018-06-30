@@ -1,6 +1,6 @@
 {
   "localIPv4Address": null,
-  "mqtt": "mqtt://128.130.33.65",
+  "mqtt": "mqtt://127.0.0.1",
   "mqtt_home": "MobileAlerts/",
 
   "logfile": "./MobileAlerts.log",
