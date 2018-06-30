@@ -10,7 +10,9 @@ Type=simple
 User=USERNAME
 
 # update to the proper path
+WorkingDirectory=/PATH/TO/MMMMobileAlerts/maserver
 ExecStart=/usr/bin/node /PATH/TO/MMMMobileAlerts/maserver/mobilealerts.js
+
 Restart=on-failure
 StandardOutput=syslog
 StandardError=syslog
