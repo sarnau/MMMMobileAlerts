@@ -1,0 +1,17 @@
+[Unit]
+Description=Mobile Alerts Proxy Server
+Documentation=https://github.com/sarnau/MMMMobileAlerts/tree/master/maserver
+After=network.target
+
+[Service]
+Type=simple
+User=pkolmann
+ExecStart=/usr/bin/node /PATH/TO/MMMMobileAlerts/maserver/mobilealerts.js
+Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=maserver
+
+[Install]
+WantedBy=multi-user.target
+
