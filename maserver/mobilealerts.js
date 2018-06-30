@@ -134,10 +134,9 @@ function sendPOST(sensor) {
   var auth = "";
   var header = {};
   if (nconf.get('serverPostUser') != null && nconf.get('serverPostPassword') != null) {
-    var auth = 'Basic ' + Buffer.from(nconf.get('serverPostUser') + ':' + nconf.get('serverPostPassword')).toString('base64');
+    auth = 'Basic ' + Buffer.from(nconf.get('serverPostUser') + ':' + nconf.get('serverPostPassword')).toString('base64');
+    header = {'Authorization': auth};
   }
-
-  header = {'Authorization': auth};
 
   var options = {
     uri: serverPost,
