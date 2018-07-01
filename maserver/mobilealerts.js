@@ -148,7 +148,7 @@ function sendPOST(sensor) {
   console.log("posting data...");
   request(options, function (error, response, body) {
     if (error || response.statusCode != 200) {
-      console.log("serverPOST failed: " + response.statusCode + " - " + error);
+      console.log("serverPOST failed: " + error);
     }
   });
 
