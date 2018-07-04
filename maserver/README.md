@@ -19,3 +19,6 @@ Hints for the ```config.json``` keys:
   * **serverPost:** set to the POST URL where the JSON data should be sent to
   * **serverPostUser**, **serverPostPassword**: Basic Authorization user and password for the POST URL
 
+
+If you have systemd as your init system, you can copy ```maserver.service``` to ```/etc/systemd/system/```, edit it to match the path where your installation is found. Then you need to reload systemd via ```systemctl daemon-reload``` and start the Unit via ```systemctl start maserver.service```.
+
