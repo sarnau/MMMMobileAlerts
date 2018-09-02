@@ -17,7 +17,7 @@ Here a list of all known products from Mobile Alerts. The product code is a mark
 | Product code | ID   | Device name      | Accuracy | Transmission Rate |
 |--------------|------|------------------|----------|-------------------|
 | MA10000      | ID00 | Gateway          |          | |
-| ?            | ID01 | Temperature sensor with ext. cable probe | | |
+| MA10120      | ID01 | Pro Temperature sensor with ext. cable probe | -29,9…+59,9 °C, ±1°C | 7 min |
 | MA10100      | ID02 | Temperature sensor | -29.9°C…+59.9°C, ±1°C | 7 min |
 | MA10101      | ID02 | Temperature sensor with cable probe | –29.9°C…+59.9°C | 7 min |
 | MA10120      | ID09 | Pro Temperature sensor with cable probe | –29.9°C…+59.9°C ±1°C | 7 min |
@@ -37,7 +37,7 @@ Here a list of all known products from Mobile Alerts. The product code is a mark
 | WL2000       | ID05 | Air quality monitor | indoor: -9.5°C…+59.9°C ±1°C, 20%…95% ±4%, outdoor -39.9°C…+59.9°C ±1°C, outdoor 1%…99%, CO²-equivalent: 450ppm…3950ppm ±50ppm | 7 min |
 | TFA30.3312.02 | ID0E | Thermo-hygro-sensor | –40.0°C…+60.0°C, 0.0%…99.0% | ? |
 | ?            | ID0F | Temperature sensor with ext. cable probe | | |
-| ?            | ID11 | 4 Thermo-hygro-sensors | | |
+| TFA30.3060.01 | ID11 | 4 Thermo-hygro-sensors | indoor: -10°C…+60°C ±1°C, outdoor -40°C…+60°C ±1°C, 1%…99% ±3% | |
 
 Each device has a unique device ID, which is 12 uppercase characters long. Every device within the range of the gateway is received by the gateway and forwarded to the internet, it technically is not necessary to know the ID, you can find it out by listening to the gateway.
 

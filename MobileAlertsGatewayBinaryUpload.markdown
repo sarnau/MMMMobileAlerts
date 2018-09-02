@@ -27,6 +27,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 | header | device ID | package length | sensor type |
 |----|----|----|-----------|
 |0xce|ID02|0x12|temperature|
+|0xd2|ID01|0x16|teperature in + temperature cable |
 |0xd2|ID03|0x16|temperature + humidity|
 |0xd2|ID0F|0x16|temperature in + temperature out |
 |0xd3|ID10|0x17|open/close sensor|
@@ -38,6 +39,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 |0xda|ID07|0x1e|temperature in + humidity in + temperature out + humidity out|
 |0xe1|ID08|0x25|rain|
 |0xe2|ID0b|0x26|wind|
+|0xea|ID11|0x2e|4 times temperature and humidity |
 
 ### Offset 1: UNIX UTC Timestamp
 A 4 byte UNIX UTC timestamp when the data was received by the gateway.
@@ -53,6 +55,12 @@ Starting here is the sensor depended data.
 
 | ID | Format of data |
 |----|----------------|
+| 01 | **Temperature sensor in/cable** |
+|    |  0 word: tx counter |
+|    |  2 word: current temperature |
+|    |  4 word: current temperature cable |
+|    |  6 word: previous temperature |
+|    |  8 word: previous temperature cable |
 | 02 | **Temperature sensor** |
 |    |  0 word: tx counter |
 |    |  2 word: current temperature |
@@ -180,6 +188,24 @@ Starting here is the sensor depended data.
 |    |  4 word: previous state (lower 12 bits contain the time in seconds/minutes/hours/days since last event) |
 |    |  6 word: previous state |
 |    |  8 word: previous state |
+| 11 | **4 Thermo-hygro-sensors (TFA30.3060.01)** |
+|    |  0 word: tx counter |
+|    |  2 word: temperature sensor 1 |
+|    |  4 word: humidity sensor 1 |
+|    |  6 word: temperature sensor 2 |
+|    |  8 word: humidity sensor 2 |
+|    |  10 word: temperature sensor 3 |
+|    |  12 word: humidity sensor 3 |
+|    |  14 word: temperature in |
+|    |  16 word: humidity in |
+|    |  18 word: previous temperature sensor 1 |
+|    |  20 word: previous humidity sensor 1 |
+|    |  22 word: previous temperature sensor 2 |
+|    |  24 word: previous humidity sensor 2 |
+|    |  26 word: previous temperature sensor 3 |
+|    |  28 word: previous humidity sensor 3 |
+|    |  30 word: previous temperature in |
+|    |  32 word: previous humidity in |
 | 12 | **Humidity Guard (MA10230)** |
 |    |  0 word: tx counter |
 |    |  2 byte: 3h humidity average |
