@@ -222,7 +222,7 @@ Starting here is the sensor depended data.
 
 | Bits  | Meaning |
 |------|---------|
-|  15  | unknown, always seems to be 0. |
+|  15  | 0: battery good, 1:battery low |
 |  14  | 0: the transmission was triggered by the internal timer of the device e.g. for thermometers transmitting the temperature every 7 minutes or sensors sending every 2 hours a heartbeat |
 |      | 1: the transmission was triggered by an event, like a battery change or the trigger of an alarm sensor or the button on the device |
 | 0…13 | These bits are a counter that is incremented on every new event overflowing from 0x3fff back to 0x0000. It can be used to filter out duplicate messages on the receiver side. |
