@@ -1,6 +1,6 @@
 # Gateway Binary Upload into the Cloud
 
-The gateway sends data via a binary HTTP request to the data server according to configuration (standard: [http://www.data199.com/gateway/put](http://www.data199.com/gateway/put)). The `Content-Type` describes it as `application/octet-stream` and an additional header `HTTP_IDENTIFY` contains the following string: Gateway Serial + ":" + Gateway MAC + ":" + action code.
+The gateway sends data via a binary HTTP request to the data server according to [configuration](MobileAlertsGatewayUDPInterface.markdown) (standard: [http://www.data199.com/gateway/put](http://www.data199.com/gateway/put)). The `Content-Type` describes it as `application/octet-stream` and an additional header `HTTP_IDENTIFY` contains the following string: Gateway Serial + ":" + Gateway MAC + ":" + action code.
 
 `HTTP_IDENTIFY: 80ABCDEF:006789ABCDEF:00` sent during boot-up of the gateway.
 `HTTP_IDENTIFY: 80ABCDEF:006789ABCDEF:C0` sent during message transmission.
