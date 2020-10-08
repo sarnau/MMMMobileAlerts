@@ -1,13 +1,13 @@
 # Gateway Binary Upload into the Cloud
 
-The gateway sends data via a binary HTTP request to [http://www.data199.com/gateway/put](http://www.data199.com/gateway/put) (to be exact the data server, which is in the configuration). The `content-type` describes it as `application/octet-stream` and an additional header `http_identify` contains the following string: Gateway Serial + ":" + Gateway MAC + ":" + action code.
+The gateway sends data via a binary HTTP request to the data server according to configuration (standard: [http://www.data199.com/gateway/put](http://www.data199.com/gateway/put)). The `Content-Type` describes it as `application/octet-stream` and an additional header `HTTP_IDENTIFY` contains the following string: Gateway Serial + ":" + Gateway MAC + ":" + action code.
 
-`http_identify: 80ABCDEF:006789ABCDEF:00` send during boot-up of the gateway.
-`http_identify: 80ABCDEF:006789ABCDEF:C0` send during message transmission.
+`HTTP_IDENTIFY: 80ABCDEF:006789ABCDEF:00` sent during boot-up of the gateway.
+`HTTP_IDENTIFY: 80ABCDEF:006789ABCDEF:C0` sent during message transmission.
 
-## Gateway block send during boot-up
+## Gateway block - sent during boot-up
 
-The binary data send during boot-up always seems to be 15 bytes. All values are always big-endian, if endianness matters.
+The binary data sent during boot-up always seems to be 15 bytes. All values are big-endian, if endianness matters.
 
 | Byte  | Meaning |
 |-------|---------|
@@ -19,7 +19,7 @@ The binary data send during boot-up always seems to be 15 bytes. All values are 
 
 ## Sensor 64-byte data block format
 
-The binary data to transfer the packages to the server is always a multiple of 64-byte blocks with each block containing one message from a sensor. Data that is non-urgent is buffered within the gateway to minimize the number of transfers to the cloud server, it seems to be send every 7 minutes. Only messages marked in the tx counter as events are send immediately. If such an event occurs, all buffered packages are also sent. Pressing the button on the gateway sends all data immediately, which is helpful for debugging.
+The binary data to transfer the packages to the server is always a multiple of 64-byte blocks with each block containing one message from a sensor. Data that is non-urgent is buffered within the gateway to minimize the number of transfers to the cloud server, it seems to be sent every 7 minutes. Only messages marked in the tx counter as events are sent immediately. If such an event occurs, all buffered packages are also sent. Pressing the button on the gateway sends all data immediately (at least on some devices), which is helpful for debugging.
 
 Every 64-byte block has a simple 7-bit checksum. It is calculated by just summing up the first 63 bytes and storing the lower 7 bit in the last byte of the message. Bit 7 in the last byte is always 0. If the checksum is invalid, the server simply ignores the package, but still returns HTTP status 200 (= OK), probably to avoid the gateway sending a defect package over and over again.
 
