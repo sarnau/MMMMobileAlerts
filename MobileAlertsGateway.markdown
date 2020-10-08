@@ -19,7 +19,7 @@ On power-on the following blink pattern can be used to detect the status:
 - 1 blink: Ethernet cable is plugged in
 - 2 blinks: DHCP server address assigned and internet is found
 - 3 blinks: cloud server found via DNS
-- 4 blinks: Gateway is ready to register (The [boot-up package](MobileAlertsGatewayBinaryUpload) is sent to the cloud server)
+- 4 blinks: Gateway is ready to register (The [boot-up package](MobileAlertsGatewayBinaryUpload.markdown) is sent to the cloud server)
 
 Once the cloud server responds the red LED turns off.
 
