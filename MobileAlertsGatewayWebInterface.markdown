@@ -36,6 +36,6 @@ Time:686300<br />
 
 `Serial No. (hex.)` is "80" plus the lower 3 bytes of the ID converted to hex. `Serial No. (dec.)` is the same, with the lower 3 bytes treated as a single number converted to decimal and with spaces every 2 digits resulting in 8 decimal digits.
 
-`Last contact` is a UTC UNIX timestamp in a ms resolution from the last time the gateway contacted the cloud server.
+`Last contact` is a UTC UNIX timestamp in a ms resolution from the last time the gateway contacted the cloud server. This number is only correct when the first **data** package has been transmitted. Registering of the gateway does lead to 700 or 800 or so. Maybe this is the counter/100, how often the gateway has been rebooted since ever?
 
 The `Time` on the webpage is the number of microseconds since boot divided by 100. Or – if you prefer it this way – the number of seconds plus 4 additional digits with sub-seconds resolution with the lowest 2 always being 0.
