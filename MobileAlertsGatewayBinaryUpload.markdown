@@ -75,7 +75,7 @@ Starting here is the sensor depended data.
 |    |  0 word: tx counter |
 |    |  2 word: temperature |
 |    |  4 word: humidity |
-|    |  6 byte: wetness sensor |
+|    |  6 byte: water sensor |
 |    |  7 word: previous temperature |
 |    |  9 word: previous humidity |
 |    | 11 byte: previous water sensor |
@@ -262,7 +262,7 @@ A sensor error typically occurs if e.g. the water temperature sensor of the pool
 | 10-15 | unknown |
 | 0…9   | humidity is a 10 bit value in 1/10% |
 
-#### Air quality
+#### Air quality (CO2)
 
 | Bits  | Meaning |
 |-------|---------|
@@ -270,7 +270,7 @@ A sensor error typically occurs if e.g. the water temperature sensor of the pool
 |   8   | probably overflow |
 | 0…7   | Counter for 50 ppm (e.g. 9 is 450 ppm) |
 
-#### Wetness
+#### Water
 
 | Bits  | Meaning |
 |-------|---------|
