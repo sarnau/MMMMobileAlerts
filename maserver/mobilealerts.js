@@ -9,6 +9,8 @@ nconf.argv().env();
 
 // Then load configuration from a designated file.
 nconf.file({ file: 'config.json' });
+// If configuration under conf exist -> load it this helps when running in docker and docker volume for conf is mounted under conf
+nconf.file({ file: 'conf/config.json' });
 
 // Provide default values for settings not provided above.
 nconf.defaults({
