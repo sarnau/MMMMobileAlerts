@@ -9,6 +9,8 @@ nconf.argv().env();
 
 // Then load configuration from a designated file.
 nconf.file({ file: 'config.json' });
+// If configuration under conf exist -> load it this helps when running in docker and docker volume for conf is mounted under conf
+nconf.file({ file: 'conf/config.json' });
 
 // Provide default values for settings not provided above.
 nconf.defaults({
@@ -227,11 +229,17 @@ function processSensorData(buffer) {
 // #############################################################
 
 // configure the Mobile Alerts Gateway to use us as a proxy server, if necessary
+const publicIPv4Adress = nconf.get('publicIPv4adress')
+//In case NAT is used configuration can contain public IP -> Could contain docker system public IP
+const proxyListenIp = publicIPv4Adress ? publicIPv4Adress : localIPv4Adress;
+
 const gatewayConfigUDP = require('./gatewayConfig')(
                           localIPv4Adress
+                        , proxyListenIp
                         , proxyServerPort
                         , nconf.get('gatewayID')
-                        , nconf.get('logGatewayInfo'));
+                        , nconf.get('logGatewayInfo')
+                        , nconf.get('gatewayIp'));
 
 // setup ourselves as a proxy server for the Mobile Alerts Gateway.
 // All 64-byte packages will arrive via this function

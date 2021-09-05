@@ -1,0 +1,36 @@
+version: '3.1'
+
+volumes:
+  mobilealerts_conf:
+  node_red_data:
+    external: true
+
+networks:
+  node-red-net:
+
+services:
+  nodered:
+    container_name: node-red
+    image: nodered/node-red:latest
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - 1880:1880
+      - 1883:1883
+    networks:
+      - node-red-net
+    restart: always
+    volumes:
+      - node_red_data:/data
+  ma:
+    container_name: mobilealerts
+    image: mobilealerts
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - 8888:8888
+    networks:
+      - node-red-net
+    volumes:
+      - mobilealerts_conf:/maserver/conf
+

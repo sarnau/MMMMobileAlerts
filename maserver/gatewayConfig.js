@@ -4,7 +4,7 @@
 // so that all requests are send to us instead into the cloud.
 // After the configuration this module is no longer needed and closes itself.
 
-module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
+module.exports = function(localIPv4Adress,proxyIPv4Address,proxyServerPort,gatewayID,debugLog,gatewayIP) {
   if(!debugLog) debugLog = true;
   // a port of 0 disables the proxy server
   const proxyServerActiveFlag = proxyServerPort != 0;
@@ -14,9 +14,8 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
   // This is the UDP port used by the Mobile Alerts Gateway
   // for the configuration
   const PORT = 8003;
-  // all communication with the gateways are broadcasts
-  const BROADCAST_ADDR = '255.255.255.255';
-
+  //If gatewayIP parameter is set take it, else fallback to broadcast address
+  const GATEWAY_ADDR = gatewayIP ? gatewayIP : '255.255.255.255';
   // Find any available gateway in the local network
   const FIND_GATEWAYS = 1
   // Find a single available gateway in the local network
@@ -137,7 +136,7 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
         // update proxy settings, if they are different from the expected ones
         if(currentProxyServerActiveFlag != proxyServerActiveFlag
            || currentProxyServerPort != proxyServerPort
-           || currentProxyServerName != localIPv4Adress) {
+           || currentProxyServerName != proxyIPv4Address) {
           console.log('### Update Mobile Alerts Gateway Proxy Settings');
 
           // build a set config buffer by copying everything out of the get config
@@ -178,11 +177,11 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
           // erase Proxy Server Name
           sendConfigBuffer.fill(0, 0x6e, 0xaf);
           // copy new proxy server name
-          sendConfigBuffer.write(localIPv4Adress, 0x6e, 'utf-8');
+          sendConfigBuffer.write(proxyIPv4Address, 0x6e, 'utf-8');
           // Proxy Port
           sendConfigBuffer.writeInt16BE(proxyServerPort, 0xaf);
 
-          udpSocket.send(sendConfigBuffer, PORT, BROADCAST_ADDR, function() {
+          udpSocket.send(sendConfigBuffer, PORT, GATEWAY_ADDR, function() {
 
             // reboot the gateway after a reconfig
             var rebootGatewayCommand = new Buffer(REBOOT_SIZE);
@@ -192,7 +191,7 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
             message.copy(rebootGatewayCommand, 0x02, 0x02, 0x08);
             rebootGatewayCommand.writeInt16BE(REBOOT_SIZE, 0x08);
 
-            udpSocket.send(rebootGatewayCommand, PORT, BROADCAST_ADDR, function() {
+            udpSocket.send(rebootGatewayCommand, PORT, GATEWAY_ADDR, function() {
               udpSocket.close();
             });
           });
@@ -213,7 +212,7 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog) {
       findGatewayCommand.fill(0, 0x00, FIND_GATEWAYS_SIZE);
       findGatewayCommand.writeInt16BE(FIND_GATEWAYS, 0x00);
       findGatewayCommand.writeInt16BE(FIND_GATEWAYS_SIZE, 0x08);
-      udpSocket.send(findGatewayCommand, PORT, BROADCAST_ADDR, function() {});
+      udpSocket.send(findGatewayCommand, PORT, GATEWAY_ADDR, function() {});
     }, 250);
   });
 
