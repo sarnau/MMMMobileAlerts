@@ -231,7 +231,8 @@ const gatewayConfigUDP = require('./gatewayConfig')(
                           localIPv4Adress
                         , proxyServerPort
                         , nconf.get('gatewayID')
-                        , nconf.get('logGatewayInfo'));
+                        , nconf.get('logGatewayInfo')
+                        , nconf.get('gatewayIp'));
 
 // setup ourselves as a proxy server for the Mobile Alerts Gateway.
 // All 64-byte packages will arrive via this function
