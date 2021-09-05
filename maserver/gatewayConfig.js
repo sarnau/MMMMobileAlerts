@@ -4,7 +4,7 @@
 // so that all requests are send to us instead into the cloud.
 // After the configuration this module is no longer needed and closes itself.
 
-module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog,gatewayIP) {
+module.exports = function(localIPv4Adress,proxyIPv4Address,proxyServerPort,gatewayID,debugLog,gatewayIP) {
   if(!debugLog) debugLog = true;
   // a port of 0 disables the proxy server
   const proxyServerActiveFlag = proxyServerPort != 0;
@@ -136,7 +136,7 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog,gat
         // update proxy settings, if they are different from the expected ones
         if(currentProxyServerActiveFlag != proxyServerActiveFlag
            || currentProxyServerPort != proxyServerPort
-           || currentProxyServerName != localIPv4Adress) {
+           || currentProxyServerName != proxyIPv4Address) {
           console.log('### Update Mobile Alerts Gateway Proxy Settings');
 
           // build a set config buffer by copying everything out of the get config
@@ -177,7 +177,7 @@ module.exports = function(localIPv4Adress,proxyServerPort,gatewayID,debugLog,gat
           // erase Proxy Server Name
           sendConfigBuffer.fill(0, 0x6e, 0xaf);
           // copy new proxy server name
-          sendConfigBuffer.write(localIPv4Adress, 0x6e, 'utf-8');
+          sendConfigBuffer.write(proxyIPv4Address, 0x6e, 'utf-8');
           // Proxy Port
           sendConfigBuffer.writeInt16BE(proxyServerPort, 0xaf);
 
