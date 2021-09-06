@@ -26,6 +26,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 ### Offset 0: Package Header
 | header | device ID | package length | sensor type |
 |----|----|----|-----------|
+|0xcb|ID0a|0x0f|Sensor for acoustical observation of detectors |
 |0xce|ID02|0x12|temperature|
 |0xce|ID15|0x12|4 button switch|
 |0xd2|ID01|0x16|teperature in + temperature cable |
