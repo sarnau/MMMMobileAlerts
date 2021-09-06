@@ -27,6 +27,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 | header | device ID | package length | sensor type |
 |----|----|----|-----------|
 |0xce|ID02|0x12|temperature|
+|0xce|ID15|0x12|4 button switch|
 |0xd2|ID01|0x16|teperature in + temperature cable |
 |0xd2|ID03|0x16|temperature + humidity|
 |0xd2|ID0F|0x16|temperature in + temperature out |
@@ -215,6 +216,11 @@ Starting here is the sensor depended data.
 |    |  6 word: current temperature |
 |    |  8 byte: current humidity |
 |    |  9-16: unknown (pervious values?) |
+| 15 | **4 button switch (MA10880)** |
+|    |  0 word: tx counter |
+|    |  1 byte: button state |
+|    |          Bit 7-4: number of button (0001=green, 0010=orange, 0011=red, 0100=yellow)
+|    |          Bit 3-0: info for pressed button (0001=short, 0002=2 times short, 0003=long)
 
 ### Value decoding
 
