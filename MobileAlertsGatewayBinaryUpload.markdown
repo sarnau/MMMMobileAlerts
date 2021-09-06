@@ -35,10 +35,12 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 |0xd3|ID10|0x17|open/close sensor|
 |0xd4|ID04|0x18|temperature + humidity + dry-contact|
 |0xd6|ID06|0x1a|temperature + humidity + pool temperature|
+|0xd6|ID09|0x1a|temperature + humidity + temperature cable|
 |0xd8|ID0E|0x1c|temperature + humidity (with decimal place)|
 |0xd9|ID12|0x1d|humidity average + temperature + humidity |
 |0xda|ID05|0x1e|temperature out + tempereature in + humidity + air quality |
 |0xda|ID07|0x1e|temperature in + humidity in + temperature out + humidity out|
+|0xe0|ID18|0x24|air pressure monitor|
 |0xe1|ID08|0x25|rain|
 |0xe2|ID0b|0x26|wind|
 |0xea|ID11|0x2e|4 times temperature and humidity |
@@ -222,6 +224,11 @@ Starting here is the sensor depended data.
 |    |  1 byte: button state |
 |    |          Bit 7-4: number of button (0001=green, 0010=orange, 0011=red, 0100=yellow)
 |    |          Bit 3-0: info for pressed button (0001=short, 0002=2 times short, 0003=long)
+| 18 | **air pressure monitor (MA10238)** |
+|    |  0 word + byte: 3-byte tx counter |
+|    |  3 word: temperature |
+|    |  5 byte: humidity |
+|    |  6 word: air pressure |
 
 ### Value decoding
 

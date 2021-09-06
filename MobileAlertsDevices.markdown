@@ -23,6 +23,7 @@ Here a list of all known products from Mobile Alerts. The product code is a mark
 | MA10120      | ID09 | Pro Temperature sensor with cable probe | –29.9°C…+59.9°C ±1°C | 7 min |
 | MA10200      | ID03 | Thermo-hygro-sensor | –39.9°C…+59.9°C, 20%…99%, ±4% | 7 min |
 | MA10230      | ID12 | Indoor Climate Status | –39.9°C…+59.9°C, ±0.8°C, 1%…99%, ±3% | |
+| MA10238      | ID18 | Air pressure monitor | -9,9…+59,9°C, ± 1°C, 1…99 % ± 5 %, 700…1150 mbar | 6 min |
 | MA10250      | ID03 | Thermo-Hygro Outdoor | –39.9°C…+59.9°C, ±1°C, 20%…99% ±5% | 7 min |
 | MA10300      | ID03 | Thermo-hygro-sensor with cable probe | –39.9°C…+59.9°C, 20%…99%, ±4% | 7 min |
 | MA10320      | ID09 | Pro Thermo-hygro-sensor with ext. cable probe | –39.9°C…+59.9°C, ±1°C, cable probe –50°C…+110°C, ±0,5°C, 20%…99% ±5% | 3.5 min |
