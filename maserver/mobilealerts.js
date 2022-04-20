@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 
-const nconf = require('nconf');
 const fs = require('fs');
 const request = require('request');
+const easyConf = require('./easyConf');
+const eConf = new easyConf();
 
 // First consider commandline arguments and environment variables, respectively.
-nconf.argv().env();
+econf.argv().env();
 
 // Then load configuration from a designated file.
-nconf.file({ file: 'config.json' });
+econf.file({ file: 'config.json' });
 // If configuration under conf exist -> load it this helps when running in docker and docker volume for conf is mounted under conf
-nconf.file({ file: 'conf/config.json' });
+econf.file({ file: 'conf/config.json' });
 
 // Provide default values for settings not provided above.
-nconf.defaults({
+econf.defaults({
   // if set to null, then default IP address discovery will be used,
   // otherwise use specified IP address
   'localIPv4Address': null,
@@ -38,14 +39,14 @@ nconf.defaults({
 });
 
 var localIPv4Adress = "";
-if (nconf.get('localIPv4Address') == null) {
+if (econf.get('localIPv4Address') == null) {
   localIPv4Adress = require('./localIPv4Address')(1);
 } else {
-  localIPv4Adress = nconf.get('localIPv4Address');
+  localIPv4Adress = econf.get('localIPv4Address');
 }
 
 console.log('### Local IP address for proxy: ' + localIPv4Adress);
-const proxyServerPort = nconf.get('proxyServerPort');
+const proxyServerPort = econf.get('proxyServerPort');
 
 // #############################################################
 
@@ -57,12 +58,12 @@ function round(value, decimals) {
 // Setup MQTT to allow us sending data to the broker
 
 const mqtt = require('mqtt');
-const mqttBroker = nconf.get('mqtt')
+const mqttBroker = econf.get('mqtt')
 var mqttClient;
 if(mqttBroker) {
-  mqttClient = mqtt.connect(nconf.get('mqtt'), {
-      'username': nconf.get('mqtt_username')
-    , 'password': nconf.get('mqtt_password') })
+  mqttClient = mqtt.connect(econf.get('mqtt'), {
+      'username': econf.get('mqtt_username')
+    , 'password': econf.get('mqtt_password') })
   mqttClient.on('connect', function () {
     console.log('### MQTT server is connected');
   });
@@ -78,14 +79,14 @@ if(mqttBroker) {
 }
 
 function sendMQTTSensorOfflineStatus(sensor, isOffline) {
-  const mqttHome = nconf.get('mqtt_home');
+  const mqttHome = econf.get('mqtt_home');
   if(!mqttHome) {
     return;
   }
 
   var json = sensor.json
   json.offline = isOffline
-  const sensorName = nconf.get('sensors:'+sensor.ID)
+  const sensorName = econf.get('sensors:'+sensor.ID)
   if(sensorName)
     console.log('### Offline state ',sensorName, JSON.stringify(json))
   else
@@ -96,14 +97,14 @@ function sendMQTTSensorOfflineStatus(sensor, isOffline) {
 
 // send sensor info via MQTT
 function sendMQTT(sensor) {
-  const mqttHome = nconf.get('mqtt_home');
+  const mqttHome = econf.get('mqtt_home');
   if(!mqttHome) {
     return;
   }
 
   var json = sensor.json
   json.offline = false
-  const sensorName = nconf.get('sensors:'+sensor.ID)
+  const sensorName = econf.get('sensors:'+sensor.ID)
   if(sensorName)
     console.log(sensorName, mqttHome+sensor.ID+'/json', JSON.stringify(json))
   else
@@ -125,7 +126,7 @@ function sendMQTT(sensor) {
 
 // send sensor info via Server POST
 function sendPOST(sensor) {
-  const serverPost = nconf.get('serverPost');
+  const serverPost = econf.get('serverPost');
   if(serverPost == null) {
     return;
   }
@@ -135,8 +136,8 @@ function sendPOST(sensor) {
 
   var auth = "";
   var header = {};
-  if (nconf.get('serverPostUser') != null && nconf.get('serverPostPassword') != null) {
-    auth = 'Basic ' + Buffer.from(nconf.get('serverPostUser') + ':' + nconf.get('serverPostPassword')).toString('base64');
+  if (econf.get('serverPostUser') != null && econf.get('serverPostPassword') != null) {
+    auth = 'Basic ' + Buffer.from(econf.get('serverPostUser') + ':' + econf.get('serverPostPassword')).toString('base64');
     header = {'Authorization': auth};
   }
 
@@ -229,7 +230,7 @@ function processSensorData(buffer) {
 // #############################################################
 
 // configure the Mobile Alerts Gateway to use us as a proxy server, if necessary
-const publicIPv4Adress = nconf.get('publicIPv4adress')
+const publicIPv4Adress = econf.get('publicIPv4adress')
 //In case NAT is used configuration can contain public IP -> Could contain docker system public IP
 const proxyListenIp = publicIPv4Adress ? publicIPv4Adress : localIPv4Adress;
 
@@ -237,13 +238,13 @@ const gatewayConfigUDP = require('./gatewayConfig')(
                           localIPv4Adress
                         , proxyListenIp
                         , proxyServerPort
-                        , nconf.get('gatewayID')
-                        , nconf.get('logGatewayInfo')
-                        , nconf.get('gatewayIp'));
+                        , econf.get('gatewayID')
+                        , econf.get('logGatewayInfo')
+                        , econf.get('gatewayIp'));
 
 // setup ourselves as a proxy server for the Mobile Alerts Gateway.
 // All 64-byte packages will arrive via this function
 const proxyServerExpressApp = require('./gatewayProxyServer')(
                           localIPv4Adress,proxyServerPort
-                        , nconf.get('logfile'), nconf.get('mobileAlertsCloudForward')
+                        , econf.get('logfile'), econf.get('mobileAlertsCloudForward')
                         , function (buffer) { processSensorData(buffer); });
