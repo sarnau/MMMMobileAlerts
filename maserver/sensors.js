@@ -81,8 +81,9 @@ SensorBase.prototype.setup = function(buffer) {
   this.getTXAndBufferOffset();
 
   this.json = this.generateJSON(buffer.slice(this.bufferOffset));
-  this.json.id = this.ID
-  this.json.t = this.unixTime
+  this.json.id = this.ID;
+  this.json.t = this.unixTime;
+  this.json.battery = (((this.tx & 0x8000) == 0x8000) ? 'low' : 'ok');
   return this;
 }
 
