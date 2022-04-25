@@ -206,7 +206,7 @@ try {
   for(sensorID in sensorList) {
     buf = sensorList[sensorID].buffer;
     if(buf) {
-      lastSensorMessages[sensorID] = sensors.CreateSensorObject(new Buffer(buf.data));
+      lastSensorMessages[sensorID] = sensors.CreateSensorObject(Buffer.from(buf.data));
       lastSensorMessages[sensorID].isOffline = sensorList[sensorID].isOffline
     }
   }
