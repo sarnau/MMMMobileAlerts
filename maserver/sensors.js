@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
 const util = require('util');
+var localeStr = null;
+
+function setLocale(localeStrIn) {
+    localeStr = localeStrIn;
+}
 
 var Sensor = function () {};
 
@@ -53,7 +58,9 @@ SensorBase.prototype.setup = function(buffer) {
   //this.header = buffer.readUInt8(0);
 
   // UTC based timestamp when the measurement was taken
-  this.unixTime = new Date(buffer.readUInt32BE(1) * 1000);
+  this.unixTime_ms = new Date(buffer.readUInt32BE(1) * 1000);
+  this.timestamp = new Date(this.unixTime_ms).toLocaleString(localeStr == null ? '' : localeStr);
+
 
   // length of the package, seems to be static in regards of the header
   this.packageLength = buffer.readUInt8(5);
@@ -82,7 +89,9 @@ SensorBase.prototype.setup = function(buffer) {
 
   this.json = this.generateJSON(buffer.slice(this.bufferOffset));
   this.json.id = this.ID;
-  this.json.t = this.unixTime;
+  this.json.t = this.timestamp;
+  this.json.ut = this.unixTime_ms / 1000;
+  this.json.utms = this.unixTime_ms;
   this.json.battery = (((this.tx & 0x8000) == 0x8000) ? 'low' : 'ok');
   return this;
 }

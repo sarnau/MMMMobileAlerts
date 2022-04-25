@@ -199,6 +199,9 @@ function sendPOST(sensor) {
 // Mobile Alerts Sensor Code
 
 const sensors = require('./sensors');
+if (locale != null) {
+    sensors.setLocale(locale);
+}
 
 var lastSensorMessages = {};
 try {
