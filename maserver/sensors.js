@@ -198,6 +198,29 @@ SensorBase.prototype.debugString = function() {
 // =============================================================
 // Specialized Sensor classes
 
+// ID01: Pro Temperature sensor with ex. cable probe (MA10120)
+function Sensor_ID01() { }
+util.inherits(Sensor_ID01, SensorBase);
+Sensor_ID01.prototype.bufferSize = function () {
+    return 8;
+}
+Sensor_ID01.prototype.transmitInterval = function () {
+    return 7;
+}
+Sensor_ID01.prototype.generateJSON = function (buffer) {
+    return {
+        'temperature': [
+            this.convertTemperature(buffer.readUInt16BE(0))
+            , this.convertTemperature(buffer.readUInt16BE(4))],
+        'temperatureExt': [this.convertTemperature(buffer.readUInt16BE(2))
+            , this.convertTemperature(buffer.readUInt16BE(6))]
+    };
+}
+Sensor_ID01.prototype.debugString = function () {
+    return this.temperaturAsString(this.json.temperature[0])
+        + ' ' + this.temperaturAsString(this.json.temperatureExt[0])
+}
+
 // ID02: Temperature sensor
 function Sensor_ID02() {}
 util.inherits(Sensor_ID02, SensorBase);
@@ -504,6 +527,34 @@ Sensor_ID10.prototype.debugString = function() {
     statusStr = 'CLOSED'
   }
   return statusStr
+}
+
+// ID11: WeatherStation (MA10410)
+function Sensor_ID11() { }
+util.inherits(Sensor_ID11, SensorBase);
+Sensor_ID11.prototype.bufferSize = function () {
+    return 32;
+}
+Sensor_ID11.prototype.transmitInterval = function () {
+    return 7;
+}
+Sensor_ID11.prototype.generateJSON = function (buffer) {
+
+    return {
+        'temperature1': [this.convertTemperature(buffer.readUInt16BE(0)), this.convertTemperature(buffer.readUInt16BE(16))],
+        'humidity1': [this.convertHumidity(buffer.readUInt16BE(2)), this.convertHumidity(buffer.readUInt16BE(18))],
+        'temperature2': [this.convertTemperature(buffer.readUInt16BE(4)), this.convertTemperature(buffer.readUInt16BE(20))],
+        'humidity2': [this.convertHumidity(buffer.readUInt16BE(6)), this.convertHumidity(buffer.readUInt16BE(22))],
+        'temperature3': [this.convertTemperature(buffer.readUInt16BE(8)), this.convertTemperature(buffer.readUInt16BE(24))],
+        'humidity3': [this.convertHumidity(buffer.readUInt16BE(10)), this.convertHumidity(buffer.readUInt16BE(26))],
+        'temperatureIN': [this.convertTemperature(buffer.readUInt16BE(12)), this.convertTemperature(buffer.readUInt16BE(28))],
+        'humidityIN': [this.convertHumidity(buffer.readUInt16BE(14)), this.convertHumidity(buffer.readUInt16BE(30))]
+    };
+}
+
+Sensor_ID11.prototype.debugString = function () {
+    return this.temperaturAsString(this.json.temperatureIN[0])
+        + ' ' + this.humidityAsString(this.json.humidityIN[0])
 }
 
 // ID12: Humidity Guard (MA10230)
