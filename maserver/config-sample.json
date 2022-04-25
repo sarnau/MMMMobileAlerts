@@ -4,15 +4,14 @@
   "mqtt_home": "MobileAlerts/",
   "mqtt_username": "user",
   "mqtt_password": "password",
+  "publish_type": "default",
+  "sonoffPublish_prefix": null,
   "logfile": "./MobileAlerts.log",
   "logGatewayInfo": true,
-
   "proxyServerPort": 8080,
-
   "mobileAlertsCloudForward": false,
-
   "serverPost": null,
   "serverPostUser": null,
-  "serverPostPassword": null
-
+  "serverPostPassword": null,
+  "locale": "en-US"
 }

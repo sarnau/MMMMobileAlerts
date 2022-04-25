@@ -5,16 +5,20 @@ const request = require('request');
 const easyConf = require('./easyConf');
 const eConf = new easyConf();
 
+// we need to hold client connections to mqtt in case of special publish type sonoff
+// client is defined online/alive only if it keeps connected...
+var mqttClientDict = {};
+
 // First consider commandline arguments and environment variables, respectively.
-econf.argv().env();
+eConf.argv().env();
 
 // Then load configuration from a designated file.
-econf.file({ file: 'config.json' });
+eConf.file({ file: 'config.json' });
 // If configuration under conf exist -> load it this helps when running in docker and docker volume for conf is mounted under conf
-econf.file({ file: 'conf/config.json' });
+eConf.file({ file: 'conf/config.json' });
 
 // Provide default values for settings not provided above.
-econf.defaults({
+eConf.defaults({
   // if set to null, then default IP address discovery will be used,
   // otherwise use specified IP address
   'localIPv4Address': null,
@@ -22,6 +26,9 @@ econf.defaults({
   'mqtt': 'mqtt://127.0.0.1',
   'mqtt_home': 'MobileAlerts/', // default MQTT path for the device parsed data
 
+  'publish_type': 'default', // Implementation to support multiple types of publishing via MQTT (implemented to support e.g. Sonoff Adapter)
+  // check if the following should be a general implementation for all or all special publish types
+  'sonoffPublish_prefix': null, // publish devices with a specific prefix rather than only their ID in case of publish type sonoff
   'logfile': './MobileAlerts.log',
   'logGatewayInfo': true,   // display info about all found gateways
 
@@ -34,19 +41,21 @@ econf.defaults({
 
   // post the resulting JSON to a http(s) Service
   'serverPost': null,
-  "serverPostUser": null,
-  "serverPostPassword": null
+  'serverPostUser': null,
+  'serverPostPassword': null,
+  'locale': null // locale that will be used to define how dates should be generated (to override system based locale) e.g. 'en-US'
 });
+let locale = eConf.get('locale');
 
 var localIPv4Adress = "";
-if (econf.get('localIPv4Address') == null) {
+if (eConf.get('localIPv4Address') == null) {
   localIPv4Adress = require('./localIPv4Address')(1);
 } else {
-  localIPv4Adress = econf.get('localIPv4Address');
+  localIPv4Adress = eConf.get('localIPv4Address');
 }
 
 console.log('### Local IP address for proxy: ' + localIPv4Adress);
-const proxyServerPort = econf.get('proxyServerPort');
+const proxyServerPort = eConf.get('proxyServerPort');
 
 // #############################################################
 
@@ -58,12 +67,12 @@ function round(value, decimals) {
 // Setup MQTT to allow us sending data to the broker
 
 const mqtt = require('mqtt');
-const mqttBroker = econf.get('mqtt')
+const mqttBroker = eConf.get('mqtt')
 var mqttClient;
 if(mqttBroker) {
-  mqttClient = mqtt.connect(econf.get('mqtt'), {
-      'username': econf.get('mqtt_username')
-    , 'password': econf.get('mqtt_password') })
+  mqttClient = mqtt.connect(eConf.get('mqtt'), {
+      'username': eConf.get('mqtt_username')
+    , 'password': eConf.get('mqtt_password') })
   mqttClient.on('connect', function () {
     console.log('### MQTT server is connected');
   });
@@ -78,39 +87,68 @@ if(mqttBroker) {
   });
 }
 
+function publishSonoffSensorState(sensorJson) {
+    var clientId = eConf.get('sonoffPublish_prefix') + sensorJson.id;
+    console.log(new Date().toLocaleString() + 'sonoff publish...');
+    console.log('clientId: ' + clientId);
+    console.log('topic: ' + clientId + '/STATE');
+    console.log('data: ' + JSON.stringify(sensorJson));
+    var sonoffMqttClient = null;
+    if (clientId in mqttClientDict && mqttClientDict[clientId].connected === true) {
+        sonoffMqttClient = mqttClientDict[clientId];
+    } else {
+        var sonoffMqttClient = mqtt.connect(eConf.get('mqtt'), {
+            'clientId': clientId,
+            'username': eConf.get('mqtt_username'),
+            'password': eConf.get('mqtt_password')
+        });
+        mqttClientDict[clientId] = sonoffMqttClient;
+    }
+    sonoffMqttClient.publish('tele/' + clientId + '/STATE', JSON.stringify(sensorJson));
+}
+
 function sendMQTTSensorOfflineStatus(sensor, isOffline) {
-  const mqttHome = econf.get('mqtt_home');
-  if(!mqttHome) {
+  const mqttHome = eConf.get('mqtt_home');
+  mqttHome = (eConf.get('publish_type') == 'sonoff' ? eConf.get('sonoffPublish_prefix') : mqttHome);
+  if (!mqttHome) {
     return;
   }
 
   var json = sensor.json
   json.offline = isOffline
-  const sensorName = econf.get('sensors:'+sensor.ID)
+  const sensorName = eConf.get('sensors:'+sensor.ID)
   if(sensorName)
     console.log('### Offline state ',sensorName, JSON.stringify(json))
   else
-    console.log('### Offline state ',sensorName, JSON.stringify(json))
-
-  mqttClient.publish(mqttHome + sensor.ID + '/json', JSON.stringify(json));
+    console.log('### Offline state ',sensor.ID, JSON.stringify(json))
+  if (eConf.get('publish_type') == 'default') {
+      mqttClient.publish(mqttHome + sensor.ID + '/json', JSON.stringify(json));
+  } else if (eConf.get('publish_type') == 'sonoff') {
+      publishSonoffSensorState(json);
+  }
 }
 
 // send sensor info via MQTT
 function sendMQTT(sensor) {
-  const mqttHome = econf.get('mqtt_home');
+  var mqttHome = eConf.get('mqtt_home');
+  mqttHome = (eConf.get('publish_type') == 'sonoff' ? eConf.get('sonoffPublish_prefix') : mqttHome);
   if(!mqttHome) {
     return;
   }
 
   var json = sensor.json
   json.offline = false
-  const sensorName = econf.get('sensors:'+sensor.ID)
+  const sensorName = eConf.get('sensors:'+sensor.ID)
   if(sensorName)
     console.log(sensorName, mqttHome+sensor.ID+'/json', JSON.stringify(json))
   else
-    console.log(sensorName, mqttHome+sensor.ID+'/json', JSON.stringify(json))
+    console.log(sensor.ID, mqttHome+sensor.ID+'/json', JSON.stringify(json))
 
-  mqttClient.publish(mqttHome + sensor.ID + '/json', JSON.stringify(json));
+  if (eConf.get('publish_type') == 'default') {
+      mqttClient.publish(mqttHome + sensor.ID + '/json', JSON.stringify(json));
+  } else if (eConf.get('publish_type') == 'sonoff') {
+      publishSonoffSensorState(json);
+  }
 /*    if(sensor.sensorType == 0x08) {
     var rain = 0;
     if(lastSensorMessages[sensor.ID]) {
@@ -126,7 +164,7 @@ function sendMQTT(sensor) {
 
 // send sensor info via Server POST
 function sendPOST(sensor) {
-  const serverPost = econf.get('serverPost');
+  const serverPost = eConf.get('serverPost');
   if(serverPost == null) {
     return;
   }
@@ -136,8 +174,8 @@ function sendPOST(sensor) {
 
   var auth = "";
   var header = {};
-  if (econf.get('serverPostUser') != null && econf.get('serverPostPassword') != null) {
-    auth = 'Basic ' + Buffer.from(econf.get('serverPostUser') + ':' + econf.get('serverPostPassword')).toString('base64');
+  if (eConf.get('serverPostUser') != null && eConf.get('serverPostPassword') != null) {
+    auth = 'Basic ' + Buffer.from(eConf.get('serverPostUser') + ':' + eConf.get('serverPostPassword')).toString('base64');
     header = {'Authorization': auth};
   }
 
@@ -230,7 +268,7 @@ function processSensorData(buffer) {
 // #############################################################
 
 // configure the Mobile Alerts Gateway to use us as a proxy server, if necessary
-const publicIPv4Adress = econf.get('publicIPv4adress')
+const publicIPv4Adress = eConf.get('publicIPv4adress')
 //In case NAT is used configuration can contain public IP -> Could contain docker system public IP
 const proxyListenIp = publicIPv4Adress ? publicIPv4Adress : localIPv4Adress;
 
@@ -238,13 +276,13 @@ const gatewayConfigUDP = require('./gatewayConfig')(
                           localIPv4Adress
                         , proxyListenIp
                         , proxyServerPort
-                        , econf.get('gatewayID')
-                        , econf.get('logGatewayInfo')
-                        , econf.get('gatewayIp'));
+                        , eConf.get('gatewayID')
+                        , eConf.get('logGatewayInfo')
+                        , eConf.get('gatewayIp'));
 
 // setup ourselves as a proxy server for the Mobile Alerts Gateway.
 // All 64-byte packages will arrive via this function
 const proxyServerExpressApp = require('./gatewayProxyServer')(
                           localIPv4Adress,proxyServerPort
-                        , econf.get('logfile'), econf.get('mobileAlertsCloudForward')
+                        , eConf.get('logfile'), eConf.get('mobileAlertsCloudForward')
                         , function (buffer) { processSensorData(buffer); });
