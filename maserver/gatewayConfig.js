@@ -9,7 +9,9 @@ module.exports = class UDPGatewayConfig {
     configureGateways(localIPv4Adress, proxyIPv4Address, proxyServerPort, gatewayID, debugLog, gatewayIP, logFile, mobileAlertsCloudForward, _callback) {
         var gatewayConfigObj = {};
         var gatewayArr = [];
-        if (!debugLog) debugLog = true;
+        // debug log on if not set (allow false)
+        if ([null, undefined].includes(debugLog))
+            debugLog = true;
         // a port of 0 disables the proxy server
         const proxyServerActiveFlag = proxyServerPort != 0;
 
@@ -113,9 +115,9 @@ module.exports = class UDPGatewayConfig {
                     for (const [itemKey, itemValue] of Object.entries(gatewayConfigObj)) {
                         console.log((configTransDict[itemKey] ? configTransDict[itemKey] : itemKey.replace('_', ' ')).padEnd(21) + ': ' + itemValue);
                     }
-                    gatewayArr.push(gatewayConfigObj);
                     //console.log('Command       : ' + command);
                 }
+                gatewayArr.push(gatewayConfigObj);
 
                 if (command == GET_CONFIG) {
                     const currentProxyServerActiveFlag = message.readInt8(0x72);
