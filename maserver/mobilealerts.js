@@ -293,7 +293,7 @@ gatewayConfig.configureGateways(
     , eConf.get('logGatewayInfo')
     , eConf.get('gatewayIp')
     , eConf.get('logfile')
-    , eConf.get('mobileAlertsClodForward'),
+    , eConf.get('mobileAlertsCloudForward'),
     function (gatewayArr, servConfDict) {
         console.log('callback 1 reached');
         printGateways(gatewayArr);
