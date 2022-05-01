@@ -9,6 +9,7 @@
     "express": "*",
     "body-parser": "*",
     "raw-body": "*",
-    "request": "*"
+    "request": "*",
+    "lodash": "*"
   }
 }
