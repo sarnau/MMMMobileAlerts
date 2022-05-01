@@ -4,3 +4,4 @@ test
 maserver/config.json
 maserver/lastSensorMessages.json
 maserver/package-lock.json
+\.vs

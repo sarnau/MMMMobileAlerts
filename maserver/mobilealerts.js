@@ -25,6 +25,8 @@ eConf.defaults({
 
     'mqtt': 'mqtt://127.0.0.1',
     'mqtt_home': 'MobileAlerts/', // default MQTT path for the device parsed data
+    'keepalive': 430,
+    'reconnectPeriod': 0,
 
     'publish_type': 'default', // Implementation to support multiple types of publishing via MQTT (implemented to support e.g. Sonoff Adapter)
     // check if the following should be a general implementation for all or all special publish types
@@ -45,6 +47,7 @@ eConf.defaults({
     'serverPostPassword': null,
     'locale': null // locale that will be used to define how dates should be generated (to override system based locale) e.g. 'en-US'
 });
+console.log('running with configuration: ' + JSON.stringify(eConf.getConfig()));
 let locale = eConf.get('locale');
 
 var localIPv4Adress = "";
@@ -72,7 +75,10 @@ var mqttClient;
 if (mqttBroker) {
     mqttClient = mqtt.connect(eConf.get('mqtt'), {
         'username': eConf.get('mqtt_username'),
-        'password': eConf.get('mqtt_password')
+        'password': eConf.get('mqtt_password'),
+        'clientId': 'MABroker',
+        'keepalive': eConf.get('keepalive'),
+        'reconnectPeriod': eConf.get('reconnectPeriod')
     })
     mqttClient.on('connect', function () {
         console.log('### MQTT server is connected');
@@ -101,7 +107,9 @@ function publishSonoffSensorState(sensorJson) {
         var sonoffMqttClient = mqtt.connect(eConf.get('mqtt'), {
             'clientId': clientId,
             'username': eConf.get('mqtt_username'),
-            'password': eConf.get('mqtt_password')
+            'password': eConf.get('mqtt_password'),
+            'keepalive': eConf.get('keepalive'),
+            'reconnectPeriod': eConf.get('reconnectPeriod')
         });
         mqttClientDict[clientId] = sonoffMqttClient;
     }
@@ -109,7 +117,7 @@ function publishSonoffSensorState(sensorJson) {
 }
 
 function sendMQTTSensorOfflineStatus(sensor, isOffline) {
-    const mqttHome = eConf.get('mqtt_home');
+    var mqttHome = eConf.get('mqtt_home');
     mqttHome = (eConf.get('publish_type') == 'sonoff' ? eConf.get('sonoffPublish_prefix') : mqttHome);
     if (!mqttHome) {
         return;
