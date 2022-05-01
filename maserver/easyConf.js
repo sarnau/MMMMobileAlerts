@@ -11,8 +11,8 @@ module.exports = class easyConf {
         }
         file(configFile) {
                 const fs = require('fs');
-                if(fs.existsSync(configFile)) {
-                        var configJson = JSON.parse(fs.readFileSync(configFile));
+                if(fs.existsSync(configFile.file)) {
+                        var configJson = JSON.parse(fs.readFileSync(configFile.file));
                         for(const [configKey, configValue] of Object.entries(configJson)) {
                                 this.configJson[configKey] = configValue;
                         }
