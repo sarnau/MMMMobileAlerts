@@ -3,14 +3,13 @@
 const util = require('util');
 var localeStr = null;
 
-function setLocale(localeStrIn) {
-    localeStr = localeStrIn;
-}
-
 var Sensor = function () {};
 
 // #############################################################
 // Sensor classes
+Sensor.prototype.setLocale = function(localeStrIn) {
+  localeStr = localeStrIn;
+}
 
 // Function to create a sensor class based on the sensor ID
 Sensor.prototype.CreateSensorObject = function(buffer) {
