@@ -82,6 +82,9 @@ SensorBase.prototype.setup = function(buffer) {
   // 6 byte sensor ID. The first byte is the ID, which identifies the type.
   this.ID = buffer.toString('hex', 6, 12).toLowerCase();
 
+  //sensor type in the case of "0e" and "03" it is necessary due to the difference in the decimal point
+  this.IDxx = buffer.toString('hex', 6, 7)
+
   // The TX value is 16 or 24 bit, based on the sensor ID.
   // This also changes the offset where the data starts
   this.getTXAndBufferOffset();
@@ -123,8 +126,13 @@ SensorBase.prototype.temperaturAsString = function(temp) {
 
 SensorBase.prototype.convertHumidity = function(value) {
   // values: 0%…100%
-  return value & 0x7f;
-}
+  if (this.IDxx=="0e") {
+  // "0e" for precision of one decimal place
+  return this.round((value & 0x7ff) * 0.1, 1);
+  }else {
+  // default precision
+  return value & 0x7f ;
+  }
 
 SensorBase.prototype.humidityAsString = function(humidity) {
   return humidity.toString() + '%'
@@ -593,3 +601,25 @@ Sensor_ID12.prototype.debugString = function() {
   + ' 7d: ' + this.humidityAsString(this.json.out.averangehumidity["7d"])
   + ' 30d: ' + this.humidityAsString(this.json.out.averangehumidity["30d"]);
 }
+
+// ID0e: Temperature/Humidity sensor (decimal precision humidity)
+function Sensor_ID0e() {}
+util.inherits(Sensor_ID0e, SensorBase);
+Sensor_ID0e.prototype.bufferSize = function() {
+  return 8;
+}
+Sensor_ID0e.prototype.transmitInterval = function() {
+  return 7;
+}
+Sensor_ID0e.prototype.generateJSON = function(buffer) {
+  return { 'temperature': [
+                          this.convertTemperature(buffer.readUInt16BE(0))
+                        , this.convertTemperature(buffer.readUInt16BE(5))],
+       'humidity': [   this.convertHumidity((buffer.readUInt16BE(2)))
+                     , this.convertHumidity((buffer.readUInt16BE(7)))] };
+}
+Sensor_ID0e.prototype.debugString = function() {
+  return this.temperaturAsString(this.json.temperature[0])
+                    + ' ' + this.humidityAsString(this.json.humidity[0])
+}
+  }
