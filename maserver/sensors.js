@@ -622,4 +622,3 @@ Sensor_ID0e.prototype.debugString = function() {
   return this.temperaturAsString(this.json.temperature[0])
                     + ' ' + this.humidityAsString(this.json.humidity[0])
 }
-  }
