@@ -133,6 +133,7 @@ SensorBase.prototype.convertHumidity = function(value) {
   // default precision
   return value & 0x7f ;
   }
+}
 
 SensorBase.prototype.humidityAsString = function(humidity) {
   return humidity.toString() + '%'
