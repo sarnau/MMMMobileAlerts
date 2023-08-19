@@ -140,6 +140,15 @@ SensorBase.prototype.humidityAsString = function(humidity) {
 }
 
 
+SensorBase.prototype.convertAirPressure = function(value) {
+  return value / 10.0;
+}
+
+SensorBase.prototype.airPressureAsString = function(pressure) {
+  return pressure.toString() + ' hPa'
+}
+
+
 SensorBase.prototype.convertAirquality = function(value) {
   // values: 450…3950ppm
   value = value & 0xfff;
@@ -601,6 +610,32 @@ Sensor_ID12.prototype.debugString = function() {
   + ' 24h: ' + this.humidityAsString(this.json.out.averangehumidity["24h"])
   + ' 7d: ' + this.humidityAsString(this.json.out.averangehumidity["7d"])
   + ' 30d: ' + this.humidityAsString(this.json.out.averangehumidity["30d"]);
+}
+
+// ID18: Air pressure monitor
+function Sensor_ID18() {}
+util.inherits(Sensor_ID18, SensorBase);
+Sensor_ID18.prototype.bufferSize = function() {
+  return 8;
+}
+Sensor_ID18.prototype.getTXAndBufferOffset = function() {
+  // The air pressure monitor has a 3 byte tx value
+  this.tx = this.buffer.readUInt32BE(12) >> 8;
+  this.bufferOffset = 15;
+};
+Sensor_ID18.prototype.transmitInterval = function() {
+  return 6;
+}
+Sensor_ID18.prototype.generateJSON = function(buffer) {
+  return { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(0)) ],
+            'humidity': [ this.convertHumidity(buffer.readUInt8(2)) ],
+            'airPressure': [ this.convertAirPressure(buffer.readUInt16BE(3)) ], 
+         };
+}
+Sensor_ID18.prototype.debugString = function() {
+  return       this.temperaturAsString(this.json.temperature[0])
+       + ' ' + this.humidityAsString(this.json.humidity[0])
+       + ' ' + this.airPressureAsString(this.json.airPressure[0])
 }
 
 // ID0e: Temperature/Humidity sensor (decimal precision humidity)
