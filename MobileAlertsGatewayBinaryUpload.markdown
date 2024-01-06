@@ -26,7 +26,7 @@ Every 64-byte block has a simple 7-bit checksum. It is calculated by just summin
 ### Offset 0: Package Header
 The relevance of this field is unknown. The value is the same as Package Length (offset 5, see below) plus 0xbc (118).
 
-Example: A package length of 0x12 plus 0xbc quals the header 0xce.
+Example: A package length of 0x12 plus 0xbc equals the header 0xce.
 
 Here is a list of the known devices:
 
