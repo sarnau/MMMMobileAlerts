@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 
 const util = require('util');
+var localeStr = null;
 
 var Sensor = function () {};
 
 // #############################################################
 // Sensor classes
+Sensor.prototype.setLocale = function(localeStrIn) {
+  localeStr = localeStrIn;
+}
 
 // Function to create a sensor class based on the sensor ID
 Sensor.prototype.CreateSensorObject = function(buffer) {
@@ -53,7 +57,9 @@ SensorBase.prototype.setup = function(buffer) {
   //this.header = buffer.readUInt8(0);
 
   // UTC based timestamp when the measurement was taken
-  this.unixTime = new Date(buffer.readUInt32BE(1) * 1000);
+  this.unixTime_ms = new Date(buffer.readUInt32BE(1) * 1000);
+  this.timestamp = new Date(this.unixTime_ms).toLocaleString(localeStr == null ? '' : localeStr);
+
 
   // length of the package, seems to be static in regards of the header
   this.packageLength = buffer.readUInt8(5);
@@ -76,13 +82,19 @@ SensorBase.prototype.setup = function(buffer) {
   // 6 byte sensor ID. The first byte is the ID, which identifies the type.
   this.ID = buffer.toString('hex', 6, 12).toLowerCase();
 
+  //sensor type in the case of "0e" and "03" it is necessary due to the difference in the decimal point
+  this.IDxx = buffer.toString('hex', 6, 7)
+
   // The TX value is 16 or 24 bit, based on the sensor ID.
   // This also changes the offset where the data starts
   this.getTXAndBufferOffset();
 
   this.json = this.generateJSON(buffer.slice(this.bufferOffset));
-  this.json.id = this.ID
-  this.json.t = this.unixTime
+  this.json.id = this.ID;
+  this.json.t = this.timestamp;
+  this.json.ut = this.unixTime_ms / 1000;
+  this.json.utms = this.unixTime_ms;
+  this.json.battery = (((this.tx & 0x8000) == 0x8000) ? 'low' : 'ok');
   return this;
 }
 
@@ -114,11 +126,26 @@ SensorBase.prototype.temperaturAsString = function(temp) {
 
 SensorBase.prototype.convertHumidity = function(value) {
   // values: 0%…100%
-  return value & 0x7f;
+  if (this.IDxx=="0e") {
+  // "0e" for precision of one decimal place
+  return this.round((value & 0x7ff) * 0.1, 1);
+  }else {
+  // default precision
+  return value & 0x7f ;
+  }
 }
 
 SensorBase.prototype.humidityAsString = function(humidity) {
   return humidity.toString() + '%'
+}
+
+
+SensorBase.prototype.convertAirPressure = function(value) {
+  return value / 10.0;
+}
+
+SensorBase.prototype.airPressureAsString = function(pressure) {
+  return pressure.toString() + ' hPa'
 }
 
 
@@ -196,6 +223,29 @@ SensorBase.prototype.debugString = function() {
 
 // =============================================================
 // Specialized Sensor classes
+
+// ID01: Pro Temperature sensor with ex. cable probe (MA10120)
+function Sensor_ID01() { }
+util.inherits(Sensor_ID01, SensorBase);
+Sensor_ID01.prototype.bufferSize = function () {
+    return 8;
+}
+Sensor_ID01.prototype.transmitInterval = function () {
+    return 7;
+}
+Sensor_ID01.prototype.generateJSON = function (buffer) {
+    return {
+        'temperature': [
+            this.convertTemperature(buffer.readUInt16BE(0))
+            , this.convertTemperature(buffer.readUInt16BE(4))],
+        'temperatureExt': [this.convertTemperature(buffer.readUInt16BE(2))
+            , this.convertTemperature(buffer.readUInt16BE(6))]
+    };
+}
+Sensor_ID01.prototype.debugString = function () {
+    return this.temperaturAsString(this.json.temperature[0])
+        + ' ' + this.temperaturAsString(this.json.temperatureExt[0])
+}
 
 // ID02: Temperature sensor
 function Sensor_ID02() {}
@@ -505,6 +555,34 @@ Sensor_ID10.prototype.debugString = function() {
   return statusStr
 }
 
+// ID11: WeatherStation (MA10410)
+function Sensor_ID11() { }
+util.inherits(Sensor_ID11, SensorBase);
+Sensor_ID11.prototype.bufferSize = function () {
+    return 32;
+}
+Sensor_ID11.prototype.transmitInterval = function () {
+    return 7;
+}
+Sensor_ID11.prototype.generateJSON = function (buffer) {
+
+    return {
+        'temperature1': [this.convertTemperature(buffer.readUInt16BE(0)), this.convertTemperature(buffer.readUInt16BE(16))],
+        'humidity1': [this.convertHumidity(buffer.readUInt16BE(2)), this.convertHumidity(buffer.readUInt16BE(18))],
+        'temperature2': [this.convertTemperature(buffer.readUInt16BE(4)), this.convertTemperature(buffer.readUInt16BE(20))],
+        'humidity2': [this.convertHumidity(buffer.readUInt16BE(6)), this.convertHumidity(buffer.readUInt16BE(22))],
+        'temperature3': [this.convertTemperature(buffer.readUInt16BE(8)), this.convertTemperature(buffer.readUInt16BE(24))],
+        'humidity3': [this.convertHumidity(buffer.readUInt16BE(10)), this.convertHumidity(buffer.readUInt16BE(26))],
+        'temperatureIN': [this.convertTemperature(buffer.readUInt16BE(12)), this.convertTemperature(buffer.readUInt16BE(28))],
+        'humidityIN': [this.convertHumidity(buffer.readUInt16BE(14)), this.convertHumidity(buffer.readUInt16BE(30))]
+    };
+}
+
+Sensor_ID11.prototype.debugString = function () {
+    return this.temperaturAsString(this.json.temperatureIN[0])
+        + ' ' + this.humidityAsString(this.json.humidityIN[0])
+}
+
 // ID12: Humidity Guard (MA10230)
 function Sensor_ID12() {}
 util.inherits(Sensor_ID12, SensorBase);
@@ -532,4 +610,51 @@ Sensor_ID12.prototype.debugString = function() {
   + ' 24h: ' + this.humidityAsString(this.json.out.averangehumidity["24h"])
   + ' 7d: ' + this.humidityAsString(this.json.out.averangehumidity["7d"])
   + ' 30d: ' + this.humidityAsString(this.json.out.averangehumidity["30d"]);
+}
+
+// ID18: Air pressure monitor
+function Sensor_ID18() {}
+util.inherits(Sensor_ID18, SensorBase);
+Sensor_ID18.prototype.bufferSize = function() {
+  return 8;
+}
+Sensor_ID18.prototype.getTXAndBufferOffset = function() {
+  // The air pressure monitor has a 3 byte tx value
+  this.tx = this.buffer.readUInt32BE(12) >> 8;
+  this.bufferOffset = 15;
+};
+Sensor_ID18.prototype.transmitInterval = function() {
+  return 6;
+}
+Sensor_ID18.prototype.generateJSON = function(buffer) {
+  return { 'temperature': [ this.convertTemperature(buffer.readUInt16BE(0)) ],
+            'humidity': [ this.convertHumidity(buffer.readUInt8(2)) ],
+            'airPressure': [ this.convertAirPressure(buffer.readUInt16BE(3)) ], 
+         };
+}
+Sensor_ID18.prototype.debugString = function() {
+  return       this.temperaturAsString(this.json.temperature[0])
+       + ' ' + this.humidityAsString(this.json.humidity[0])
+       + ' ' + this.airPressureAsString(this.json.airPressure[0])
+}
+
+// ID0e: Temperature/Humidity sensor (decimal precision humidity)
+function Sensor_ID0e() {}
+util.inherits(Sensor_ID0e, SensorBase);
+Sensor_ID0e.prototype.bufferSize = function() {
+  return 8;
+}
+Sensor_ID0e.prototype.transmitInterval = function() {
+  return 7;
+}
+Sensor_ID0e.prototype.generateJSON = function(buffer) {
+  return { 'temperature': [
+                          this.convertTemperature(buffer.readUInt16BE(0))
+                        , this.convertTemperature(buffer.readUInt16BE(5))],
+       'humidity': [   this.convertHumidity((buffer.readUInt16BE(2)))
+                     , this.convertHumidity((buffer.readUInt16BE(7)))] };
+}
+Sensor_ID0e.prototype.debugString = function() {
+  return this.temperaturAsString(this.json.temperature[0])
+                    + ' ' + this.humidityAsString(this.json.humidity[0])
 }
