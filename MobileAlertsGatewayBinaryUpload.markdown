@@ -24,7 +24,7 @@ The binary data to transfer the packages to the server is always a multiple of 6
 Every 64-byte block has a simple 7-bit checksum. It is calculated by just summing up the first 63 bytes and storing the lower 7 bit in the last byte of the message. Bit 7 in the last byte is always 0. If the checksum is invalid, the server simply ignores the package, but still returns HTTP status 200 (= OK), probably to avoid the gateway sending a defect package over and over again.
 
 ### Offset 0: Package Header
-The relevance of this field is unknown. The value is the same as Package Length (offset 5, see below) plus 0xbc (118).
+The relevance of this field is unknown. The value semms to be the same as Package Length (offset 5, see below) plus 0xbc (118).
 
 Example: A package length of 0x12 plus 0xbc equals the header 0xce.
 
@@ -55,7 +55,7 @@ Here is a list of the known devices:
 A 4 byte UNIX UTC timestamp when the data was received by the gateway.
 
 ### Offset 5: Package Length
-Length of data within the whole package in bytes. It seems to be always be the same for the same header and device ID.
+Length of data within the whole package in bytes. Note: The Package Header (offset 0, see above) seems to always be 0xbc (118) higher than the Package Length.
 
 ### Offset 6: Device ID
 6 byte device ID, which matches the sensor MAC address. **The first byte is the ID, which defines the content of the data.**
