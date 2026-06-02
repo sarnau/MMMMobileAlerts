@@ -11,7 +11,7 @@ module.exports = function(localIPv4Adress,proxyServerPort
   const bodyParser = require('body-parser');
   const getRawBody = require('raw-body');
   const fs = require('fs');
-  const request = require('request-micro');
+  const request = require('dropin-request');
 
   const app = express();
   app.use(bodyParser.urlencoded({ extended: false }));

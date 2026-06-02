@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const request = require('request-micro');
+const request = require('dropin-request');
 const easyConf = require('./easyConf');
 const eConf = new easyConf();
 

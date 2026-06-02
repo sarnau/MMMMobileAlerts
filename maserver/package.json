@@ -9,7 +9,7 @@
     "express": "*",
     "body-parser": "*",
     "raw-body": "*",
-    "request-micro": "*",
+    "dropin-request": "*",
     "lodash": "*"
   }
 }
