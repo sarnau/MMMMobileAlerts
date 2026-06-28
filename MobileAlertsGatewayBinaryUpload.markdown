@@ -256,7 +256,7 @@ Starting here is the sensor depended data.
 |  14   | unknown, typically 0, but can be 1 |
 |  13   | overflow (too hot for the sensor) and is displayed as "OFL°C" |
 |  12   | sensor error occurred. It is represented as "---°C" |
-|  11   | unknown, always seems to be 0. |
+|  11   | battery low flag: 0 if battery ok, 1 if low, relevant for sub-sensors of WeatherStation (ID11). |
 | 0…10  | temperature is a signed 11 bit value in 1/10°C.
 |       | 0…1023 represents 0.0°C…102.3°C = value * 0.1 |
 |       | 1024…2047 do represent -102.4°C…-0.1°C = (2048-value) * -0.1 |
