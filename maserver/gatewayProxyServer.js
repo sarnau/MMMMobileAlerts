@@ -118,8 +118,16 @@ module.exports = function(localIPv4Adress,proxyServerPort
           };
 
           request(options, function (error, response, body) {
-            if (error || response.statusCode != 200) {
-              console.log("Error forwarding to Mobile Alerts Cloud: " + response.statusCode);
+            if (error || !response || response.statusCode != 200) {
+              if (error) {
+                console.log("Error forwarding to Mobile Alerts Cloud: " + error.message + " (code: " + error.code + ")");
+              }
+              else if (!response) {
+                console.log("Error forwarding to Mobile Alerts Cloud: no response received");
+              }
+              else {
+                console.log("Error forwarding to Mobile Alerts Cloud: " + response.statusCode);
+              }
             }
           });
         }
