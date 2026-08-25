@@ -8,13 +8,11 @@ module.exports = function(localIPv4Adress,proxyServerPort
                          ,logfile,mobileAlertsCloudForward,processSensorData) {
 
   const express = require('express');
-  const bodyParser = require('body-parser');
   const getRawBody = require('raw-body');
   const fs = require('fs');
   const request = require('dropin-request');
 
   const app = express();
-  app.use(bodyParser.urlencoded({ extended: false }));
 
   // send a standard reply back to the Gateway.
   function sendReplyPackageFromServer(data,res) {
