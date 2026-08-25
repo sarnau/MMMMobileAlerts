@@ -4,12 +4,11 @@
   "description": "Mobile-Alerts Sensor Server with MQTT and log support",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "nconf": "*",
-    "mqtt": "*",
-    "express": "*",
-    "body-parser": "*",
-    "raw-body": "*",
-    "dropin-request": "*",
-    "lodash": "*"
+    "nconf": "^0.13.0",
+    "mqtt": "^5.15.2",
+    "express": "^5.2.1",
+    "raw-body": "^2.5.2",
+    "dropin-request": "^1.1.1",
+    "lodash": "^4.18.1"
   }
 }
